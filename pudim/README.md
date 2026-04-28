@@ -119,7 +119,7 @@ A IA verifica se tudo foi validado antes de marcar como concluído.
 | `/pudim-tarefa-criar TASK-XYZ` | Gera a estrutura completa da tarefa |
 | `/pudim-tarefa-validar TASK-XYZ` | Aprova a especificação e libera execução |
 | `/pudim-tarefa-fechar TASK-XYZ` | Valida e fecha a tarefa com evidências |
-| `/pudim-status` | Mostra o board atual do projeto |
+| `/pudim-status` | Mostra o board atual do projeto (pode usar a qualquer momento) |
 
 > Explicação detalhada de cada comando: [COMMANDS.md](COMMANDS.md)
 
@@ -177,6 +177,8 @@ pudim/specs/TASK-003/
 ```
 
 **5. Você implementa com a IA, uma subtarefa por vez.**
+
+> Dica: use `/pudim-status` durante o fluxo para acompanhar o andamento da task no board.
 
 **6. Quando terminar, fecha com evidência:**
 

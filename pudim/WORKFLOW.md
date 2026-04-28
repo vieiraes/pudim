@@ -10,6 +10,8 @@ Cada task percorre três colunas, igual ao Jira:
 ╚══════════════╝   ╚════════════════╝   ╚═══════════╝
 ```
 
+> Você pode rodar `/pudim-status` em qualquer fase para ver em qual coluna cada task está.
+
 ## O ponto de partida obrigatório
 
 Antes do board e antes da primeira task, existe uma etapa zero:
@@ -118,3 +120,4 @@ Uma task está **Feita** quando:
 - `/pudim-tarefa-criar`: cria e preenche a especificação da task
 - `/pudim-tarefa-validar`: aprova a especificação e libera execução
 - `/pudim-tarefa-fechar`: valida evidências e fecha a task
+- `/pudim-status`: consulta o board a qualquer momento

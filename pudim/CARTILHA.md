@@ -13,6 +13,7 @@ Leia isso antes de qualquer coisa. Leva uns 10 minutos.
 - Como instalar no GitHub Copilot (VS Code) e no Claude Code
 - Como usar cada comando
 - Como criar sua primeira tarefa do zero até o fim
+- Como checar o board a qualquer momento com `/pudim-status`
 - Erros comuns e como evitar
 
 ---
@@ -139,9 +140,10 @@ seu-projeto/
     prompts/
       pudim-const.prompt.md
       pudim-iniciar.prompt.md
-      pudim-criartarefa.prompt.md
-      pudim-abrirspec.prompt.md
-      pudim-fechar.prompt.md
+      pudim-tarefa-registrar.prompt.md
+      pudim-tarefa-criar.prompt.md
+      pudim-tarefa-validar.prompt.md
+      pudim-tarefa-fechar.prompt.md
       pudim-status.prompt.md
     agents/
       pudim-orchestrator.agent.md
@@ -229,6 +231,11 @@ Se estiver usando Copilot, confirme também:
 - [ ] `.github/skills/pudim-sdd/SKILL.md`
 - [ ] `.github/prompts/pudim-const.prompt.md`
 - [ ] `.github/prompts/pudim-iniciar.prompt.md`
+- [ ] `.github/prompts/pudim-tarefa-registrar.prompt.md`
+- [ ] `.github/prompts/pudim-tarefa-criar.prompt.md`
+- [ ] `.github/prompts/pudim-tarefa-validar.prompt.md`
+- [ ] `.github/prompts/pudim-tarefa-fechar.prompt.md`
+- [ ] `.github/prompts/pudim-status.prompt.md`
 - [ ] `.github/agents/pudim-orchestrator.agent.md`
 
 ---
@@ -293,6 +300,8 @@ O agente vai fazer 6 perguntas (uma de cada vez) e gerar o `CONST.md` preenchido
 
 Vamos criar uma tarefa do zero. Exemplo: _"criar página inicial do site"_.
 
+> **Em qualquer momento do fluxo, rode `/pudim-status` para ver o status atual do projeto e da task.**
+
 ---
 
 #### Passo 1 — Crie a tarefa
@@ -332,6 +341,8 @@ Depois de preencher a SPEC, aprove com:
 ```
 
 A IA vai criar a pasta `pudim/specs/TASK-001/` com três arquivos.
+
+Depois da aprovação da SPEC, você pode rodar `/pudim-status` para confirmar que a task entrou em andamento.
 
 Ela também vai te fazer perguntas para preencher o `SPEC.md`:
 
@@ -390,6 +401,8 @@ Implemente a SUB-001: criar estrutura HTML da página
 
 Siga na ordem das dependências. Não pule etapas.
 
+Se quiser confirmar a coluna da task durante a execução, rode `/pudim-status`.
+
 Conforme cada subtarefa for concluída, marque no `TASKS.md`:
 
 ```
@@ -421,6 +434,8 @@ Se tudo passar, o `STATUS.md` é atualizado:
 ```
 - [x] TASK-001 | Criar página inicial do site | Depende de: -
 ```
+
+Para confirmar o fechamento no board, rode `/pudim-status`.
 
 ---
 
@@ -506,6 +521,8 @@ Implementa subtarefa por subtarefa
     ↓
 /pudim-tarefa-fechar TASK-XYZ
     ↓
+/pudim-status  ← pode rodar a qualquer momento para checar andamento
+  ↓
 STATUS.md atualizado ✓
 ```
 

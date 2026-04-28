@@ -115,9 +115,10 @@ Apenas para Copilot:
 - [ ] `.github/skills/pudim-sdd/SKILL.md`
 - [ ] `.github/prompts/pudim-const.prompt.md`
 - [ ] `.github/prompts/pudim-iniciar.prompt.md`
-- [ ] `.github/prompts/pudim-criartarefa.prompt.md`
-- [ ] `.github/prompts/pudim-abrirspec.prompt.md`
-- [ ] `.github/prompts/pudim-fechar.prompt.md`
+- [ ] `.github/prompts/pudim-tarefa-registrar.prompt.md`
+- [ ] `.github/prompts/pudim-tarefa-criar.prompt.md`
+- [ ] `.github/prompts/pudim-tarefa-validar.prompt.md`
+- [ ] `.github/prompts/pudim-tarefa-fechar.prompt.md`
 - [ ] `.github/prompts/pudim-status.prompt.md`
 - [ ] `.github/agents/pudim-orchestrator.agent.md`
 
@@ -146,6 +147,12 @@ No Copilot Chat ou Claude:
 
 ```
 /pudim-iniciar
+```
+
+### 4. Consulte o board a qualquer momento
+
+```
+/pudim-status
 ```
 
 ---

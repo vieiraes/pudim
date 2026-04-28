@@ -113,7 +113,7 @@ pudim/specs/TASK-003/VALIDATION.md
 
 **O que faz:** Exibe o board atual do projeto.
 
-**Quando usar:** Quando você quer ver o que está em andamento, o que falta e o que já foi feito.
+**Quando usar:** A qualquer momento do fluxo, para ver o que está em andamento, o que falta e o que já foi feito.
 
 **Resultado esperado:**
 ```
@@ -137,7 +137,7 @@ TASK-003
 | `/pudim-tarefa-criar TASK-XYZ` | Gera pacote da tarefa | pudim/specs/TASK-XYZ/ |
 | `/pudim-tarefa-validar TASK-XYZ` | Aprova a especificação e libera execução | SPEC.md |
 | `/pudim-tarefa-fechar TASK-XYZ` | Valida e fecha | VALIDATION.md + STATUS.md |
-| `/pudim-status` | Exibe o board | — |
+| `/pudim-status` | Exibe o board (a qualquer momento) | — |
 
 ---
 
