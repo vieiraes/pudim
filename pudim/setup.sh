@@ -1,7 +1,8 @@
 #!/bin/bash
 # =============================================================================
-# 🍮 Pudim SDD — Wizard de Setup
-# Guia o dev junior por todos os pré-requisitos do projeto, passo a passo.
+#                                     🍮
+#                                 Pudim SDD
+# Guia o dev por todos os pré-requisitos do projeto, passo a passo.
 #
 # Como usar:
 #   chmod +x pudim/setup.sh
@@ -80,7 +81,7 @@ ask_confirm() {
   [[ "$RESP" =~ ^[Ss]$ ]]
 }
 
-TOTAL_STEPS=8
+TOTAL_STEPS=9
 ERROS=0
 
 # =============================================================================
@@ -311,7 +312,26 @@ fi
 ask_continue
 
 # =============================================================================
-print_step 8 "Resumo"
+print_step 8 "Validação do projeto (harness)"
+
+VALIDATE_SCRIPT="$PWD/pudim/validate-project.sh"
+if [ -f "$VALIDATE_SCRIPT" ]; then
+  echo ""
+  if bash "$VALIDATE_SCRIPT" --quick; then
+    ok "Harness: projeto consistente, nenhum erro crítico."
+  else
+    warn "Harness detectou erros críticos. Veja acima e corrija antes de começar."
+    ERROS=$((ERROS+1))
+  fi
+else
+  info "pudim/validate-project.sh não encontrado — harness não executado."
+  tip "Rode este wizard novamente após instalar o script de validação."
+fi
+
+ask_continue
+
+# =============================================================================
+print_step 9 "Resumo"
 
 echo ""
 if [ "$ERROS" -eq 0 ]; then

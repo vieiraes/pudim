@@ -9,6 +9,14 @@ Task: ${input:taskId:ID da task, ex: TASK-001}
 
 Você é o assistente do framework Pudim SDD.
 
+**Gate de pré-condições (execute antes de qualquer criação):**
+
+0. Verifique se o `STATUS.md` existe na raiz do projeto.
+   - Se não existir, informe o usuário e interrompa. Oriente a rodar `pudim/setup.sh` primeiro.
+1. Verifique se `${taskId}` já existe no `STATUS.md`.
+   - Se não existir, informe o usuário e pergunte se deseja registrá-la agora antes de criar o spec pack.
+   - Só avance se a task estiver registrada no STATUS.md.
+
 1. Verifique se `pudim/specs/${taskId}/` já existe.
 	- Se sim, abra os arquivos e pergunte se o usuário quer atualizar.
 	- Se não, crie a pasta.
@@ -25,8 +33,9 @@ Você é o assistente do framework Pudim SDD.
 	- Critérios de aceite (mínimo 3)
 	- Riscos principais
 
-4. Confirme o que foi gerado e lembre que a tarefa precisa ser validada antes de qualquer implementação.
+4. Confirme o que foi gerado e lembre que a tarefa precisa ter a SPEC aprovada antes de qualquer implementação.
 
 Regras:
 - Critérios de aceite devem ser verificáveis e objetivos.
 - Escopo fora deve ser tão claro quanto o dentro.
+- Nunca criar spec pack sem a task registrada no STATUS.md.
