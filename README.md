@@ -52,7 +52,7 @@ o quê    em partes  o código    que funciona
 
 - Devs **iniciantes** que querem trabalhar de forma organizada
 - Devs que usam **GitHub Copilot** ou **Claude Code** no dia a dia
-- Times pequenos que precisam de **rastreabilidade simples** sem burocracia
+- Times que precisam de **rastreabilidade simples** sem burocracia
 - Qualquer pessoa que já perdeu horas com retrabalho por falta de alinhamento
 
 ---
@@ -77,6 +77,15 @@ chmod +x pudim/setup.sh
 
 Ele verifica tudo (Git, Node, arquivos do Pudim, .gitignore) e mostra o que está faltando.
 
+**Opcional — instale o hook de validação automática:**
+
+```bash
+chmod +x pudim/install-hooks.sh
+./pudim/install-hooks.sh
+```
+
+A partir daí, cada `git commit` valida automaticamente a integridade do fluxo Pudim (spec packs, dependências, alinhamento de critérios). Só erros críticos bloqueam o commit.
+
 ### Passo 3 — Defina as regras do projeto
 
 No Copilot Chat ou Claude, digite:
@@ -85,7 +94,7 @@ No Copilot Chat ou Claude, digite:
 /pudim-const
 ```
 
-A IA faz 6 perguntas e gera o `CONST.md` — as regras inegociáveis do projeto. Faça isso **uma vez**, antes de qualquer tarefa.
+A IA faz 6 perguntas e gera o `CONST.md` (CONSTANTE)— as regras inegociáveis do projeto. Faça isso **uma vez**, antes de qualquer tarefa.
 
 ### Passo 4 — Crie sua primeira tarefa
 
@@ -140,7 +149,7 @@ O board no `STATUS.md` fica assim:
 - [ ] TASK-003 | Tela de login com email e senha | Depende de: -
 ```
 
-**2. Abre a especificação:**
+**2. Abre a especificação da tarefa:**
 
 ```
 /pudim-tarefa-criar TASK-003

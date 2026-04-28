@@ -100,6 +100,8 @@ Leia o CLAUDE.md e me ajuda com o framework Pudim.
 - [ ] `pudim/WORKFLOW.md`
 - [ ] `pudim/COMMANDS.md`
 - [ ] `pudim/setup.sh` (wizard de terminal)
+- [ ] `pudim/validate-project.sh` (harness de validação do fluxo)
+- [ ] `pudim/install-hooks.sh` (instalador do hook pre-commit)
 - [ ] `pudim/templates/CONST.md`
 - [ ] `pudim/templates/AGENTS.md`
 - [ ] `pudim/templates/CLAUDE.md`
