@@ -14,7 +14,6 @@ Ele foi feito para reduzir retrabalho, deixar o escopo explícito e ajudar times
 
 - `pudim/`: documentação, templates e utilitários do framework
 - `.github/`: prompts, skills e agents para uso com Copilot
-- `lavajato/`: projeto de teste usado para validar o fluxo do framework
 
 ## Como começar
 
