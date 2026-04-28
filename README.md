@@ -77,14 +77,6 @@ chmod +x pudim/setup.sh
 
 Ele verifica tudo (Git, Node, arquivos do Pudim, .gitignore) e mostra o que está faltando.
 
-**Opcional — instale o hook de validação automática:**
-
-```bash
-chmod +x pudim/install-hooks.sh
-./pudim/install-hooks.sh
-```
-
-A partir daí, cada `git commit` valida automaticamente a integridade do fluxo Pudim (spec packs, dependências, alinhamento de critérios). Só erros críticos bloqueam o commit.
 
 ### Passo 3 — Defina as regras do projeto
 

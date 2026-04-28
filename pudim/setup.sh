@@ -312,11 +312,29 @@ fi
 ask_continue
 
 # =============================================================================
-print_step 8 "Validação do projeto (harness)"
+print_step 8 "Instalando hook de validação automática"
+
+HOOK_INSTALLER="$PWD/pudim/install-hooks.sh"
+HOOK_FILE="$PWD/.git/hooks/pre-commit"
+
+if [ -f "$HOOK_INSTALLER" ]; then
+  chmod +x "$HOOK_INSTALLER"
+  if [ -f "$HOOK_FILE" ]; then
+    ok "Hook pre-commit já instalado — nada a fazer."
+  else
+    bash "$HOOK_INSTALLER" > /dev/null 2>&1 && \
+      ok "Hook pre-commit instalado automaticamente." || \
+      warn "Não foi possível instalar o hook. Rode manualmente: ./pudim/install-hooks.sh"
+  fi
+else
+  info "pudim/install-hooks.sh não encontrado — hook não instalado."
+fi
+
+echo ""
 
 VALIDATE_SCRIPT="$PWD/pudim/validate-project.sh"
 if [ -f "$VALIDATE_SCRIPT" ]; then
-  echo ""
+  chmod +x "$VALIDATE_SCRIPT"
   if bash "$VALIDATE_SCRIPT" --quick; then
     ok "Harness: projeto consistente, nenhum erro crítico."
   else
@@ -325,7 +343,6 @@ if [ -f "$VALIDATE_SCRIPT" ]; then
   fi
 else
   info "pudim/validate-project.sh não encontrado — harness não executado."
-  tip "Rode este wizard novamente após instalar o script de validação."
 fi
 
 ask_continue

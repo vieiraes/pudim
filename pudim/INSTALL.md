@@ -135,7 +135,7 @@ chmod +x pudim/setup.sh
 ./pudim/setup.sh
 ```
 
-Ele verifica tudo automaticamente e oferece correções.
+Ele verifica tudo automaticamente, instala o hook de validação e oferece correções.
 
 ### 2. Crie o CONST.md
 
