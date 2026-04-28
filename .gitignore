@@ -1,0 +1,14 @@
+lavajato/
+
+# Dependencias e build
+node_modules/
+dist/
+build/
+
+# Ambiente
+.env
+.env.local
+.env.*
+
+# Logs
+*.log

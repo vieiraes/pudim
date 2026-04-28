@@ -1,0 +1,74 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Fundo escuro do card -->
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1A0A00"/>
+      <stop offset="1" stop-color="#2C1200"/>
+    </linearGradient>
+    <!-- Corpo do pudim (amarelo-creme) -->
+    <linearGradient id="pudimBody" x1="256" y1="160" x2="256" y2="390" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F5D27A"/>
+      <stop offset="1" stop-color="#E8A930"/>
+    </linearGradient>
+    <!-- Calda de caramelo (topo) -->
+    <linearGradient id="caramel" x1="256" y1="130" x2="256" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7A2D00"/>
+      <stop offset="1" stop-color="#C4550A"/>
+    </linearGradient>
+    <!-- Prato -->
+    <linearGradient id="plate" x1="256" y1="370" x2="256" y2="410" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F0E6D2"/>
+      <stop offset="1" stop-color="#D4C4A0"/>
+    </linearGradient>
+    <!-- Brilho no pudim -->
+    <radialGradient id="shine" cx="310" cy="220" r="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF9E6" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#F5D27A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Fundo arredondado -->
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+
+  <!-- Prato -->
+  <ellipse cx="256" cy="392" rx="148" ry="22" fill="url(#plate)"/>
+  <ellipse cx="256" cy="390" rx="148" ry="12" fill="#EDE0C4"/>
+
+  <!-- Corpo do pudim (forma trapezoidal arredondada, mais larga em cima) -->
+  <path d="
+    M 156 370
+    Q 148 370 148 362
+    L 148 240
+    Q 148 160 256 160
+    Q 364 160 364 240
+    L 364 362
+    Q 364 370 356 370
+    Z
+  " fill="url(#pudimBody)"/>
+
+  <!-- Topo do pudim (calda de caramelo) -->
+  <ellipse cx="256" cy="200" rx="108" ry="44" fill="url(#caramel)"/>
+
+  <!-- Buraco central do topo (caracteristica do pudim) -->
+  <ellipse cx="256" cy="196" rx="28" ry="10" fill="#5A1E00" opacity="0.7"/>
+
+  <!-- Calda escorrendo — lado esquerdo -->
+  <path d="M 186 200 Q 176 240 178 280 Q 170 278 168 250 Q 162 215 172 198 Z"
+        fill="#C4550A" opacity="0.85"/>
+
+  <!-- Calda escorrendo — lado direito -->
+  <path d="M 326 200 Q 336 238 334 275 Q 342 272 344 245 Q 350 212 340 198 Z"
+        fill="#C4550A" opacity="0.85"/>
+
+  <!-- Calda escorrendo — centro frontal -->
+  <path d="M 242 244 Q 240 288 244 310 Q 256 316 268 310 Q 272 288 270 244 Q 256 250 242 244 Z"
+        fill="#A83E00" opacity="0.6"/>
+
+  <!-- Brilho no corpo -->
+  <ellipse cx="256" cy="265" rx="108" ry="105" fill="url(#shine)"/>
+
+  <!-- Texto "pudim" pequeno e elegante na base -->
+  <text x="256" y="382" text-anchor="middle" font-family="Georgia, serif"
+        font-size="22" font-style="italic" fill="#7A4A1A" opacity="0.75"
+        letter-spacing="3">pudim</text>
+</svg>
