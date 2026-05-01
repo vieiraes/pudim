@@ -18,10 +18,9 @@ Este projeto segue versionamento semantico:
 
 ## [Unreleased]
 
-### Added
-- Estrutura inicial de changelog para registrar releases do framework.
+Sem mudancas no momento.
 
-## [0.3.0] - 2026-04-30
+## [0.3.2] - 2026-04-30
 
 ### Added
 - Arquivo central de versao em [pudim/VERSION](pudim/VERSION).
@@ -31,3 +30,4 @@ Este projeto segue versionamento semantico:
 
 ### Changed
 - Fluxo de release definido: nova versao e declarada no momento de publicacao (commit + envio para branch), nao a cada commit intermediario.
+- Regra operacional: sempre que houver pedido explicito para commit + envio para branch, a release correspondente deve ser registrada no changelog na mesma entrega.
