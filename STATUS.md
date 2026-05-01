@@ -8,3 +8,4 @@ Formato: uma linha por task, estilo card Jira, com status simples e dependencias
 <!-- - [x] TASK-003 | Tarefa concluída | Depende de: TASK-001 -->
 
 - [x] TASK-001 | Harness leve de validação do fluxo Pudim SDD | Depende de: -
+- [x] TASK-002 | Permitir /pudim-status com argumento para task específica | Depende de: -

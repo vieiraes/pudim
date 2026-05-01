@@ -108,6 +108,18 @@ Quando terminar, use:
 
 A IA verifica se tudo foi validado antes de marcar como concluído.
 
+### Passo 6 — Consulte o status a qualquer momento
+
+Para ver o board completo:
+```
+/pudim-status
+```
+
+Para ver o status de uma tarefa específica (mesmo após conclusão):
+```
+/pudim-status TASK-001
+```
+
 ---
 
 ## Comandos disponíveis
@@ -121,8 +133,27 @@ A IA verifica se tudo foi validado antes de marcar como concluído.
 | `/pudim-tarefa-validar TASK-XYZ` | Aprova a especificação e libera execução |
 | `/pudim-tarefa-fechar TASK-XYZ` | Valida e fecha a tarefa com evidências |
 | `/pudim-status` | Mostra o board atual do projeto |
+| `/pudim-status TASK-XYZ` | Mostra o status de uma task específica (mesmo fechada) |
 
 > Explicação detalhada de cada comando: [COMMANDS.md](COMMANDS.md)
+
+---
+
+## Versão e Changelog
+
+O Pudim usa uma versão central em `pudim/VERSION`.
+
+- Exemplo de valor: `0.3.0`
+- O `setup.sh` e o `install-hooks.sh` mostram essa versão no terminal.
+- Cada spec pack novo recebe rodapé com `Pudim-Spec: vX.Y.Z` em `SPEC.md`, `TASKS.md` e `VALIDATION.md`.
+
+As mudanças por versão ficam em `CHANGELOG.md`.
+
+Regra prática de release:
+
+1. Trabalhe normalmente em `Unreleased`.
+2. Quando for publicar (momento de commit final e envio para branch), escolha o bump de versão.
+3. Atualize `pudim/VERSION` e feche a seção da versão no `CHANGELOG.md`.
 
 ---
 
@@ -217,6 +248,7 @@ pudim/
     SPEC.md       ← template de especificação
     TASKS.md      ← template de subtarefas
     VALIDATION.md ← template de validação
+    VERSION       ← versão central do framework
   specs/
     README.md     ← como escrever boas specs
     TASK-XYZ/     ← criada automaticamente pelo /pudim-tarefa-criar

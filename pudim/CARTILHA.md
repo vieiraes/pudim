@@ -273,6 +273,25 @@ Apenas siga as instruções até o wizard mostrar:
 
 Aí sim você está pronto para o próximo passo.
 
+### Versão do Pudim e histórico de mudanças
+
+Para não perder rastreabilidade, o Pudim usa:
+
+- `pudim/VERSION` como fonte única da versão atual (ex.: `0.3.0`)
+- `CHANGELOG.md` para listar o que mudou em cada versão
+
+Regra simples:
+
+1. Você trabalha normalmente durante o desenvolvimento.
+2. Quando for publicar (commit final + envio para branch), decide o bump da versão.
+3. Atualiza `pudim/VERSION` e registra as mudanças no `CHANGELOG.md`.
+
+Tipos de bump:
+
+- PATCH: correção sem mudança de fluxo (`0.3.0` → `0.3.1`)
+- MINOR: funcionalidade nova sem quebra (`0.3.0` → `0.4.0`)
+- MAJOR: mudança com quebra (`0.3.0` → `1.0.0`)
+
 ---
 
 ## Parte 4 — Usando o Pudim
@@ -492,6 +511,7 @@ Para confirmar o fechamento no board, rode `/pudim-status`.
 | `/pudim-tarefa-validar TASK-XYZ` | Terminou a especificação e quer aprovar para seguir |
 | `/pudim-tarefa-fechar TASK-XYZ` | Implementação concluída, quer validar e fechar |
 | `/pudim-status` | Quer ver o board completo |
+| `/pudim-status TASK-XYZ` | Quer ver o status de uma task específica (mesmo fechada) |
 
 ### Arquivos que você vai editar
 
@@ -521,7 +541,7 @@ Implementa subtarefa por subtarefa
     ↓
 /pudim-tarefa-fechar TASK-XYZ
     ↓
-/pudim-status  ← pode rodar a qualquer momento para checar andamento
+/pudim-status ou /pudim-status TASK-XYZ  ← pode rodar a qualquer momento para checar andamento
   ↓
 STATUS.md atualizado ✓
 ```

@@ -111,11 +111,23 @@ pudim/specs/TASK-003/VALIDATION.md
 
 ## `/pudim-status`
 
-**O que faz:** Exibe o board atual do projeto.
+**O que faz:** Exibe o board atual do projeto. Suporta argumento opcional para exibir uma task específica.
 
 **Quando usar:** A qualquer momento do fluxo, para ver o que está em andamento, o que falta e o que já foi feito.
 
-**Resultado esperado:**
+**Como usar:**
+
+### Sem argumento (padrão - exibe board inteiro)
+```
+/pudim-status
+```
+
+### Com argumento (exibe apenas uma task)
+```
+/pudim-status TASK-001
+```
+
+**Resultado esperado (board inteiro):**
 ```
 BOARD DO PROJETO
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -123,6 +135,16 @@ A FAZER          EM ANDAMENTO     FEITO
 TASK-002         TASK-001         —
 TASK-003
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+**Resultado esperado (task específica):**
+```
+DETALHES: TASK-001
+
+Título          | Harness leve de validação...
+Status          | ✅ FEITO
+Depende de      | -
+Especificação   | ✅ Aprovada
 ```
 
 ---
@@ -137,7 +159,7 @@ TASK-003
 | `/pudim-tarefa-criar TASK-XYZ` | Gera pacote da tarefa | pudim/specs/TASK-XYZ/ |
 | `/pudim-tarefa-validar TASK-XYZ` | Aprova a especificação e libera execução | SPEC.md |
 | `/pudim-tarefa-fechar TASK-XYZ` | Valida e fecha | VALIDATION.md + STATUS.md |
-| `/pudim-status` | Exibe o board (a qualquer momento) | — |
+| `/pudim-status` | Exibe o board (sem args) ou task específica (com TASK-XYZ) | — |
 
 ---
 
@@ -161,3 +183,23 @@ chmod +x pudim/setup.sh
 7. Resumo com próximos passos
 
 > Rode o `setup.sh` **antes** de qualquer outro comando.
+
+---
+
+## Versão do Pudim e Changelog
+
+O Pudim usa uma fonte única de versão em `pudim/VERSION`.
+
+- Exemplo: `0.3.0`
+- O `setup.sh` e o `install-hooks.sh` exibem a versão atual no terminal.
+- O comando `/pudim-tarefa-criar` deve preencher o rodapé `Pudim-Spec` com essa versão em:
+	- `pudim/specs/TASK-XYZ/SPEC.md`
+	- `pudim/specs/TASK-XYZ/TASKS.md`
+	- `pudim/specs/TASK-XYZ/VALIDATION.md`
+
+As mudanças por versão ficam em `CHANGELOG.md` (raiz do repositório do framework).
+
+Regra de release:
+1. Atualize `CHANGELOG.md`.
+2. Atualize `pudim/VERSION`.
+3. Faça o commit de release quando decidir publicar.

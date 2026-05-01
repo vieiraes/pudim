@@ -27,3 +27,7 @@
 - SUB-003:
 - SUB-004:
 - SUB-005:
+
+---
+
+**Pudim-Spec:** v{{PUDIM_VERSION}}

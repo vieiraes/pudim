@@ -25,6 +25,8 @@ Você é o assistente do framework Pudim SDD.
 	- `pudim/templates/SPEC.md` → `pudim/specs/${taskId}/SPEC.md`
 	- `pudim/templates/TASKS.md` → `pudim/specs/${taskId}/TASKS.md`
 	- `pudim/templates/VALIDATION.md` → `pudim/specs/${taskId}/VALIDATION.md`
+	- Após copiar, leia `pudim/VERSION` e substitua `{{PUDIM_VERSION}}` nos 3 arquivos.
+	- Se `pudim/VERSION` não existir, substitua por `desconhecida`.
 
 3. Preencha a especificação com base no que o usuário informar:
 	- Objetivo em uma frase
@@ -39,3 +41,4 @@ Regras:
 - Critérios de aceite devem ser verificáveis e objetivos.
 - Escopo fora deve ser tão claro quanto o dentro.
 - Nunca criar spec pack sem a task registrada no STATUS.md.
+- O rodapé com `Pudim-Spec` deve aparecer em SPEC.md, TASKS.md e VALIDATION.md.

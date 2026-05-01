@@ -18,18 +18,24 @@ DIM='\033[2m'
 RESET='\033[0m'
 
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
-HOOKS_DIR="$ROOT/.git/hooks"
+HOOKS_DIR="$(git rev-parse --git-path hooks 2>/dev/null || echo "$ROOT/.git/hooks")"
 HOOK_FILE="$HOOKS_DIR/pre-commit"
+VERSION_FILE="$ROOT/pudim/VERSION"
+PUDIM_VERSION="desconhecida"
+
+if [[ -f "$VERSION_FILE" ]]; then
+  PUDIM_VERSION="$(tr -d '[:space:]' < "$VERSION_FILE")"
+fi
 
 echo ""
 echo -e "${BLUE}${BOLD}╔══════════════════════════════════════════════╗${RESET}"
 echo -e "${BLUE}${BOLD}║   🍮  Pudim SDD — Instalador de Hooks        ║${RESET}"
 echo -e "${BLUE}${BOLD}╚══════════════════════════════════════════════╝${RESET}"
+echo -e "${DIM}  Versão do Pudim: v${PUDIM_VERSION}${RESET}"
 echo ""
 
 if [[ ! -d "$HOOKS_DIR" ]]; then
-  echo -e "  ${YELLOW}⚠  Diretório .git/hooks não encontrado. Este script deve ser rodado dentro de um repositório Git.${RESET}"
-  exit 1
+  mkdir -p "$HOOKS_DIR"
 fi
 
 # Fazer backup se já existir

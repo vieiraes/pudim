@@ -25,7 +25,11 @@ Diretrizes para usar Claude Code neste repositorio com o framework Pudim SDD.
 4. Implementar em pequenos incrementos.
 5. Validar criterios e registrar evidencias no VALIDATION.
 6. Atualizar STATUS.md para concluido quando aprovado.
+## Restrições de agente
 
+- **Comandos informativos** (`/pudim-status`, `/pudim-status TASK-XYZ`): APENAS LEITURA. Nunca edite.
+- **Edições fora do fluxo SDD** (SPEC → TASKS → BUILD → VALIDATION): PROIBIDAS.
+- Se encontrar inconsistências durante `/pudim-status`: Informe, não corrija.
 ## Formato de resposta recomendado
 
 1. Resumo da task e escopo

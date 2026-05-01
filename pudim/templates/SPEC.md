@@ -60,3 +60,7 @@ _Quais partes do sistema são afetadas? (deixe em branco o que não se aplica)_
 
 - Aprovado por:
 - Data:
+
+---
+
+**Pudim-Spec:** v{{PUDIM_VERSION}}

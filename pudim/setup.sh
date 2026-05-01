@@ -18,6 +18,12 @@ COMMAND_TASK_CREATE="/pudim-tarefa-criar"
 COMMAND_TASK_VALIDATE="/pudim-tarefa-validar"
 COMMAND_TASK_CLOSE="/pudim-tarefa-fechar"
 COMMAND_STATUS="/pudim-status"
+PUDIM_VERSION_FILE="$PWD/pudim/VERSION"
+PUDIM_VERSION="desconhecida"
+
+if [ -f "$PUDIM_VERSION_FILE" ]; then
+  PUDIM_VERSION="$(tr -d '[:space:]' < "$PUDIM_VERSION_FILE")"
+fi
 
 # --- Cores -------------------------------------------------------------------
 RED='\033[0;31m'
@@ -37,6 +43,7 @@ print_header() {
   echo -e "${BLUE}${BOLD}║   🍮  Pudim SDD — Wizard de Setup            ║${RESET}"
   echo -e "${BLUE}${BOLD}╚══════════════════════════════════════════════╝${RESET}"
   echo -e "${DIM}  Projeto: $(basename "$PWD")${RESET}"
+  echo -e "${DIM}  Versão do Pudim: v${PUDIM_VERSION}${RESET}"
   echo ""
 }
 
@@ -79,6 +86,23 @@ ask_confirm() {
   echo -e "  ${YELLOW}→ $1 (s/n):${RESET} \c"
   read -r RESP
   [[ "$RESP" =~ ^[Ss]$ ]]
+}
+
+ask_choice_ai() {
+  echo ""
+  echo -e "  ${YELLOW}Qual ambiente de IA você vai usar neste projeto?${RESET}"
+  echo -e "  ${DIM}1) Copilot  2) Claude  3) Ambos${RESET}"
+  echo -e "  ${YELLOW}Escolha (1/2/3) [3]:${RESET} \c"
+  read -r RESP
+  case "$RESP" in
+    1) echo "copilot" ;;
+    2) echo "claude" ;;
+    3|"") echo "both" ;;
+    *)
+      warn "Opção inválida. Vou considerar 'Ambos'."
+      echo "both"
+      ;;
+  esac
 }
 
 TOTAL_STEPS=9
@@ -146,6 +170,7 @@ ARQUIVOS=(
   "pudim/README.md"
   "pudim/CARTILHA.md"
   "pudim/COMMANDS.md"
+  "pudim/VERSION"
   "pudim/WORKFLOW.md"
   "pudim/INSTALL.md"
   "pudim/templates/CONST.md"
@@ -238,31 +263,49 @@ ask_continue
 # =============================================================================
 print_step 6 "Verificando ferramentas de IA"
 
-echo -e "  ${BOLD}GitHub Copilot:${RESET}"
-COPILOT_ARQUIVOS=(
-  ".github/skills/pudim-sdd/SKILL.md"
-  ".github/prompts/pudim-const.prompt.md"
-  ".github/prompts/pudim-iniciar.prompt.md"
-  ".github/prompts/pudim-tarefa-registrar.prompt.md"
-  ".github/prompts/pudim-tarefa-criar.prompt.md"
-  ".github/prompts/pudim-tarefa-validar.prompt.md"
-  ".github/prompts/pudim-tarefa-fechar.prompt.md"
-  ".github/prompts/pudim-status.prompt.md"
-  ".github/agents/pudim-orchestrator.agent.md"
-)
-COPILOT_OK=true
-for f in "${COPILOT_ARQUIVOS[@]}"; do
-  if [ -f "$f" ]; then ok "$f"
-  else fail "Não encontrado: $f"; COPILOT_OK=false; fi
-done
+AI_MODE=$(ask_choice_ai)
 
-echo ""
-if [ "$COPILOT_OK" = false ]; then
-  warn "Arquivos do Copilot incompletos. Veja: pudim/INSTALL.md"
-  ERROS=$((ERROS+1))
-else
-  ok "Pacote de prompts do Pudim encontrado e consistente."
-  tip "Comandos disponíveis: ${COMMAND_CONST}, ${COMMAND_START}, ${COMMAND_STATUS}"
+if [ "$AI_MODE" = "copilot" ] || [ "$AI_MODE" = "both" ]; then
+  echo ""
+  echo -e "  ${BOLD}GitHub Copilot:${RESET}"
+  COPILOT_ARQUIVOS=(
+    ".github/skills/pudim-sdd/SKILL.md"
+    ".github/prompts/pudim-const.prompt.md"
+    ".github/prompts/pudim-iniciar.prompt.md"
+    ".github/prompts/pudim-tarefa-registrar.prompt.md"
+    ".github/prompts/pudim-tarefa-criar.prompt.md"
+    ".github/prompts/pudim-tarefa-validar.prompt.md"
+    ".github/prompts/pudim-tarefa-fechar.prompt.md"
+    ".github/prompts/pudim-status.prompt.md"
+    ".github/agents/pudim-orchestrator.agent.md"
+  )
+  COPILOT_OK=true
+  for f in "${COPILOT_ARQUIVOS[@]}"; do
+    if [ -f "$f" ]; then ok "$f"
+    else fail "Não encontrado: $f"; COPILOT_OK=false; fi
+  done
+
+  echo ""
+  if [ "$COPILOT_OK" = false ]; then
+    warn "Arquivos do Copilot incompletos. Veja: pudim/INSTALL.md"
+    ERROS=$((ERROS+1))
+  else
+    ok "Pacote de prompts do Pudim encontrado e consistente."
+    tip "Comandos disponíveis: ${COMMAND_CONST}, ${COMMAND_START}, ${COMMAND_STATUS}"
+  fi
+fi
+
+if [ "$AI_MODE" = "claude" ] || [ "$AI_MODE" = "both" ]; then
+  echo ""
+  echo -e "  ${BOLD}Claude Code:${RESET}"
+  if [ -f "CLAUDE.md" ]; then
+    ok "CLAUDE.md encontrado."
+  else
+    warn "CLAUDE.md não encontrado. Crie a partir do template se for usar Claude."
+    if [ "$AI_MODE" = "claude" ]; then
+      ERROS=$((ERROS+1))
+    fi
+  fi
 fi
 
 ask_continue
@@ -315,16 +358,24 @@ ask_continue
 print_step 8 "Instalando hook de validação automática"
 
 HOOK_INSTALLER="$PWD/pudim/install-hooks.sh"
-HOOK_FILE="$PWD/.git/hooks/pre-commit"
+HOOK_FILE=""
+
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  HOOK_FILE="$(git rev-parse --git-path hooks/pre-commit 2>/dev/null || echo "$PWD/.git/hooks/pre-commit")"
+else
+  HOOK_FILE="$PWD/.git/hooks/pre-commit"
+fi
 
 if [ -f "$HOOK_INSTALLER" ]; then
   chmod +x "$HOOK_INSTALLER"
   if [ -f "$HOOK_FILE" ]; then
-    ok "Hook pre-commit já instalado — nada a fazer."
+    info "Hook pre-commit já existe. Atualizando para a versão mais recente do Pudim..."
+  fi
+
+  if bash "$HOOK_INSTALLER"; then
+    ok "Hook pre-commit instalado/atualizado automaticamente."
   else
-    bash "$HOOK_INSTALLER" > /dev/null 2>&1 && \
-      ok "Hook pre-commit instalado automaticamente." || \
-      warn "Não foi possível instalar o hook. Rode manualmente: ./pudim/install-hooks.sh"
+    warn "Não foi possível instalar/atualizar o hook. Rode manualmente: ./pudim/install-hooks.sh"
   fi
 else
   info "pudim/install-hooks.sh não encontrado — hook não instalado."
@@ -373,6 +424,12 @@ echo -e "     ${DIM}→ ${COMMAND_STATUS}${RESET}"
 echo ""
 echo -e "  ${CYAN}4.${RESET} Dúvidas? Leia a cartilha"
 echo -e "     ${DIM}→ pudim/CARTILHA.md${RESET}"
+echo ""
+echo -e "  ${GREEN}${BOLD}Bem-vindo ao Pudim SDD.${RESET}"
+echo -e "  ${DIM}Versão instalada: v${PUDIM_VERSION}${RESET}"
+echo -e "  ${DIM}Obrigado por desenvolver com IA usando SPEC + Harness.${RESET}"
+echo -e "  ${DIM}A ideia do Pudim é simples: quando é bem feito, fica perfeito e todo mundo gosta.${RESET}"
+echo -e "  ${DIM}Respira fundo: você está no framework certo.${RESET}"
 echo ""
 echo -e "${BLUE}${BOLD}╔══════════════════════════════════════════════╗${RESET}"
 echo -e "${BLUE}${BOLD}║   🍮  Bom desenvolvimento!                   ║${RESET}"

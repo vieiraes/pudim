@@ -47,3 +47,7 @@ _Copie os critérios da SPEC e registre a evidência de cada um._
 - Resultado final:
 - Pendências abertas:
 - Pode ser publicado? Sim / Não
+
+---
+
+**Pudim-Spec:** v{{PUDIM_VERSION}}

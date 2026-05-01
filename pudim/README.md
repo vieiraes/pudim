@@ -125,6 +125,24 @@ A IA verifica se tudo foi validado antes de marcar como concluído.
 
 ---
 
+## Versão e Changelog
+
+O Pudim usa uma versão central em `pudim/VERSION`.
+
+- Exemplo de valor: `0.3.0`
+- O `setup.sh` e o `install-hooks.sh` mostram essa versão no terminal.
+- Cada spec pack novo recebe rodapé com `Pudim-Spec: vX.Y.Z` em `SPEC.md`, `TASKS.md` e `VALIDATION.md`.
+
+As mudanças por versão ficam em `CHANGELOG.md`.
+
+Regra prática de release:
+
+1. Trabalhe normalmente em `Unreleased`.
+2. Quando for publicar (momento de commit final e envio para branch), escolha o bump de versão.
+3. Atualize `pudim/VERSION` e feche a seção da versão no `CHANGELOG.md`.
+
+---
+
 ## Como funciona na prática
 
 ### Exemplo real — passo a passo
@@ -218,6 +236,7 @@ pudim/
     SPEC.md       ← template de especificação
     TASKS.md      ← template de subtarefas
     VALIDATION.md ← template de validação
+    VERSION       ← versão central do framework
   specs/
     README.md     ← como escrever boas specs
     TASK-XYZ/     ← criada automaticamente pelo /pudim-tarefa-criar
