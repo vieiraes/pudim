@@ -1,7 +1,7 @@
 # Pudim
 
 <p align="center">
-   <img src="https://cdn-icons-png.flaticon.com/512/3465/3465429.png" width="120" alt="Pudim logo" />
+   <img src="assets/pudim-icon.svg" width="120" alt="Pudim logo" />
 </p>
 
 <p align="center">
@@ -54,6 +54,25 @@ o quê    em partes  o código    que funciona
 - Devs que usam **GitHub Copilot** ou **Claude Code** no dia a dia
 - Times pequenos que precisam de **rastreabilidade simples** sem burocracia
 - Qualquer pessoa que já perdeu horas com retrabalho por falta de alinhamento
+
+---
+
+## Portal do Pudim (via visual)
+
+Prefere ver passo a passo em vez de ler vários `.md` em sequência? Copie a pasta `portal/`
+(irmã de `pudim/`, veja [INSTALL.md](INSTALL.md)) para o seu projeto e rode:
+
+```bash
+cd portal
+npm install
+npm start
+```
+
+Abra `http://127.0.0.1:4444` — manual visual com instalação (Claude Code + Copilot), o fluxo
+SPEC→TASKS→BUILD→VALIDATION, todos os comandos e um walkthrough da primeira tarefa. O portal
+também **executa de verdade** `validate-project.sh` e `install-hooks.sh` (allowlist fixa, ver
+`portal/README.md`), com os logs em tempo real na própria página — `setup.sh` continua só com
+"copiar comando" por ser interativo.
 
 ---
 

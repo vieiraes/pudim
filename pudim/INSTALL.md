@@ -27,6 +27,7 @@ No VS Code, instale:
 ```
 seu-projeto/
   pudim/                              ← copie esta pasta inteira
+  portal/                             ← opcional: manual visual (veja README.md > Portal do Pudim)
   .github/
     skills/pudim-sdd/SKILL.md         ← copie
     prompts/pudim-*.prompt.md         ← copie todos os arquivos pudim-*
@@ -65,6 +66,7 @@ Siga: https://docs.anthropic.com/claude-code
 ```
 seu-projeto/
   pudim/       ← copie esta pasta inteira
+  portal/      ← opcional: manual visual (veja README.md > Portal do Pudim)
 ```
 
 > **Não copie** `AGENTS.md`, `CLAUDE.md` e `STATUS.md` da raiz deste repositório — eles são específicos do projeto de exemplo.
@@ -110,6 +112,7 @@ Leia o CLAUDE.md e me ajuda com o framework Pudim.
 - [ ] `pudim/templates/SPEC.md`
 - [ ] `pudim/templates/TASKS.md`
 - [ ] `pudim/templates/VALIDATION.md`
+- [ ] `portal/` ← opcional (manual visual): `server.js`, `package.json`, `public/`
 - [ ] `AGENTS.md` ← criado a partir do template, preenchido com seu projeto
 - [ ] `STATUS.md` ← criado a partir do template (começa vazio)
 - [ ] `CLAUDE.md` ← criado a partir do template (se usar Claude Code)

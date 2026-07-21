@@ -34,13 +34,19 @@ Para o Pudim ser viável:
 3. Aprovar specs (`/pudim-tarefa-validar`)
 4. Fechar tasks com evidência (`/pudim-tarefa-fechar`)
 5. Visualizar board (`/pudim-status`)
+6. Manual visual opcional (`portal/`) — não é pré-requisito dos itens 1-5, é uma via alternativa de apresentação
 
 ---
 
 ## Direção Tecnológica
 
 ### Frontend
-N/A — Pudim é orquestração de texto e arquivos, roda no terminal e chat de IA.
+O núcleo do Pudim continua sendo orquestração de texto e arquivos (terminal + chat de IA) — isso
+não muda. Desde a TASK-006, existe também o **Portal do Pudim** (`portal/`, Node/Express +
+vanilla JS): uma camada de apresentação **opcional** que serve um manual visual (instalação,
+comandos, primeira tarefa). É a via **preferida** para aprender e operar o Pudim quando o dev
+prefere iteração visual à interação por terminal, mas nenhum comando `/pudim-*` passa a depender
+dele — o portal documenta o fluxo, não o substitui.
 
 ### Backend
 - **Linguagem:** Bash (scripts)
@@ -71,7 +77,6 @@ N/A — Pudim é orquestração de texto e arquivos, roda no terminal e chat de 
 
 ## Fora de Escopo Inicial
 
-- UI gráfica ou integração web
 - Suporte a múltiplos repositórios remotos
 - Versionamento de specs (1 spec per task, sem histórico)
 - APIs externas ou webhooks

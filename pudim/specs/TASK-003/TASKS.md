@@ -22,11 +22,11 @@
 
 ## Evidencias por subtask
 
-- SUB-001: Regra de priorização documentada no prompt do `/pudim-status` com ordem explícita entre tasks em andamento e tasks desbloqueadas.
-- SUB-002: Bloco `CONTEXTO DA TASK PRIORITARIA` adicionado ao formato padrão do board em `.github/prompts/pudim-status.prompt.md`.
-- SUB-003: Argumento `TASK-XYZ` preservado; `CONTEXTO` mantido como alias de compatibilidade no mesmo prompt.
-- SUB-004: Documentação atualizada em `pudim/COMMANDS.md` e `pudim/CARTILHA.md`.
-- SUB-005: `pudim/specs/TASK-003/VALIDATION.md` preenchido com evidências objetivas para CA-01 a CA-05, baseado no prompt e na documentação atualizados.
+- SUB-001: Seção "Determinação da task prioritária" em `.github/prompts/pudim-status.prompt.md` (linhas 29-45), com ordem explícita de 3 passos + caso "tudo concluído".
+- SUB-002: Bloco `🧭 CONTEXTO DA TASK PRIORITARIA` adicionado ao exemplo de "Formato de saída — Board inteiro" (linhas 94-98) e regra de exibição correspondente (linhas 166-167) em `.github/prompts/pudim-status.prompt.md`.
+- SUB-003: Argumento `TASK-XYZ` preservado (seção "Formato de saída — Task específica" inalterada); `CONTEXTO` adicionado como alias com formato próprio (linhas 101-116) e regras de exibição (linhas 169-173) no mesmo prompt.
+- SUB-004: `pudim/COMMANDS.md` (seção `/pudim-status` reescrita com os 3 modos de uso) e `pudim/CARTILHA.md` (tabela de comandos com a linha `CONTEXTO`) atualizados.
+- SUB-005: `pudim/specs/TASK-003/VALIDATION.md` preenchido com evidências objetivas para CA-01 a CA-05, apontando linha/arquivo real de cada mudança.
 
 ---
 

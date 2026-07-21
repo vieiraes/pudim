@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Portal do Pudim — manual visual</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="assets/pudim-icon.svg" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<header class="topbar">
+  <button class="icon-btn nav-toggle" id="nav-toggle" aria-label="Abrir menu">☰</button>
+  <img class="logo" src="assets/pudim-icon.svg" alt="Pudim" />
+  <span class="brand">Portal do Pudim</span>
+  <span class="tagline">Manual visual — instalação, comandos e primeira tarefa</span>
+  <span class="spacer"></span>
+  <button class="icon-btn" id="theme-toggle" aria-label="Alternar tema">🌓 Tema</button>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav>
+      <ul>
+        <li><a href="#inicio">Início</a></li>
+        <li><a href="#camadas">Ferramenta, framework e projeto</a></li>
+        <li><a href="#pre-requisitos">Pré-requisitos</a></li>
+        <li><a href="#instalacao">Instalação</a></li>
+        <li><a href="#fluxo">O fluxo do Pudim</a></li>
+        <li><a href="#comandos">Comandos</a></li>
+        <li><a href="#executar">Executar scripts</a></li>
+        <li><a href="#primeira-tarefa">Sua primeira tarefa</a></li>
+        <li><a href="#faq">Erros comuns / FAQ</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main>
+    <section id="inicio">
+      <div class="hero">
+        <img class="hero-logo" src="assets/pudim-icon.svg" alt="Pudim" />
+        <h1>O framework simples para Dev.</h1>
+        <p class="lead">Em português. Passo a passo. Sem complicação.</p>
+      </div>
+      <p>
+        Você abre o Copilot ou o Claude e diz: <em>"cria uma tela de login"</em>. A IA começa a
+        codar. Mas: o que exatamente deveria ser feito? Quais eram os critérios para considerar
+        pronto? A tarefa realmente foi concluída ou só parece?
+      </p>
+      <p>
+        Sem uma especificação antes, o resultado vira um ciclo de retrabalho.
+        <strong>O Pudim resolve isso</strong>: ele obriga você a pensar antes de codar — e
+        garante que a IA trabalhe dentro do escopo que você definiu.
+      </p>
+      <div class="card">
+        <strong>As 3 regras do Pudim</strong>
+        <ol>
+          <li>Sem SPEC aprovada, sem código.</li>
+          <li>Uma tarefa por vez. Escopo mínimo.</li>
+          <li>Sem evidência, sem fechar.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="camadas">
+      <h2>Ferramenta, framework ou o meu projeto?</h2>
+      <p>
+        Isso costuma confundir quem está começando. A resposta curta: você
+        <strong>sempre</strong> desenvolve dentro da ferramenta de IA (Claude Code ou GitHub
+        Copilot). "Usar o Pudim" é a <em>disciplina</em> que essa ferramenta passa a seguir
+        dentro do seu projeto — não é uma alternativa a ela.
+      </p>
+      <p>É a diferença entre o carro (a ferramenta) e o piloto automático (o Pudim): você continua dirigindo o mesmo carro, só que com um modo de operar mais disciplinado.</p>
+      <div class="card-grid">
+        <div class="card">
+          <h3>1. A ferramenta de IA</h3>
+          <p>Claude Code ou GitHub Copilot. É onde você digita os comandos <code>/pudim-*</code>.</p>
+        </div>
+        <div class="card">
+          <h3>2. O framework Pudim</h3>
+          <p>A pasta <code>pudim/</code> e os prompts em <code>.github/</code> que você copia para o seu projeto — o fluxo SPEC → TASKS → BUILD → VALIDATION.</p>
+        </div>
+        <div class="card">
+          <h3>3. O seu projeto</h3>
+          <p>O <code>STATUS.md</code>, o <code>CONST.md</code> e os spec packs em
+            <code>pudim/specs/TASK-XYZ/</code> que o Pudim cria <strong>dentro</strong> do seu
+            projeto — são seus, não vêm prontos.</p>
+        </div>
+      </div>
+      <p>
+        Regra prática ao instalar: arquivos em <code>pudim/templates/</code> e prompts em
+        <code>.github/</code> são genéricos e copiáveis. <code>STATUS.md</code>, <code>CONST.md</code>
+        e qualquer <code>pudim/specs/TASK-XYZ/</code> que você já tenha visto em exemplos
+        <strong>não</strong> devem ser copiados — cada projeto cria os seus.
+      </p>
+    </section>
+
+    <section id="pre-requisitos">
+      <h2>Pré-requisitos</h2>
+      <ul>
+        <li>Um repositório Git com o seu projeto.</li>
+        <li><strong>GitHub Copilot</strong> (VS Code) <strong>ou</strong> <strong>Claude Code</strong>.</li>
+        <li>Node.js (usado pelo wizard de setup e por este portal).</li>
+        <li>Cerca de 5 minutos.</li>
+      </ul>
+    </section>
+
+    <section id="instalacao">
+      <h2>Instalação</h2>
+      <div class="tabs" role="tablist">
+        <button class="tab-btn active" data-tab="claude">Claude Code (terminal)</button>
+        <button class="tab-btn" data-tab="copilot">GitHub Copilot (IDE)</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="claude">
+        <ol class="steps">
+          <li class="step">
+            <div class="step-illustration">
+              <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#F0B84E"/><rect x="14" y="20" width="36" height="24" rx="4" fill="#2A1200"/><path d="M20 28 L27 32 L20 36" stroke="#F0E8D2" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="31" y="34" width="12" height="3" rx="1.5" fill="#F0E8D2"/></svg>
+            </div>
+            <div class="step-body">
+              <h3>1. Instale o Claude Code</h3>
+              <p>Siga o guia oficial: <a href="https://docs.anthropic.com/claude-code" target="_blank" rel="noopener">docs.anthropic.com/claude-code</a>.</p>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-illustration">
+              <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#9A4A0E"/><rect x="16" y="16" width="32" height="24" rx="3" fill="#F2E8D2"/><rect x="16" y="16" width="32" height="6" rx="3" fill="#DE9C2E"/><rect x="20" y="30" width="24" height="4" rx="2" fill="#9A4A0E"/></svg>
+            </div>
+            <div class="step-body">
+              <h3>2. Copie os arquivos do Pudim para o seu projeto</h3>
+              <p>Copie a pasta <code>pudim/</code> inteira para dentro do seu projeto. Depois crie os seus próprios arquivos a partir dos templates:</p>
+              <div class="codeblock">
+                <button class="copy-btn" data-copy="cp pudim/templates/AGENTS.md AGENTS.md
+cp pudim/templates/CLAUDE.md CLAUDE.md
+cp pudim/templates/STATUS.md STATUS.md">Copiar</button>
+                <pre>cp pudim/templates/AGENTS.md AGENTS.md
+cp pudim/templates/CLAUDE.md CLAUDE.md
+cp pudim/templates/STATUS.md STATUS.md</pre>
+              </div>
+              <p><strong>Não copie</strong> o <code>AGENTS.md</code>, <code>CLAUDE.md</code> e <code>STATUS.md</code> de um projeto de exemplo — eles são específicos daquele projeto.</p>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-illustration">
+              <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#F0B84E"/><rect x="16" y="18" width="32" height="28" rx="4" fill="#2A1200"/><path d="M22 26h20M22 32h20M22 38h12" stroke="#F2E8D2" stroke-width="3" stroke-linecap="round"/></svg>
+            </div>
+            <div class="step-body">
+              <h3>3. Rode o wizard de setup</h3>
+              <div class="codeblock">
+                <button class="copy-btn" data-copy="chmod +x pudim/setup.sh
+./pudim/setup.sh">Copiar</button>
+                <pre>chmod +x pudim/setup.sh
+./pudim/setup.sh</pre>
+              </div>
+              <p>Ele verifica Git, Node, arquivos do Pudim e <code>.gitignore</code>, e mostra o que está faltando.</p>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-illustration">
+              <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#9A4A0E"/><path d="M18 34 L28 44 L46 22" stroke="#F2E8D2" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="step-body">
+              <h3>4. Teste</h3>
+              <p>No terminal, dentro do projeto:</p>
+              <div class="codeblock">
+                <button class="copy-btn" data-copy="claude">Copiar</button>
+                <pre>claude</pre>
+              </div>
+              <p>Quando a sessão abrir, digite:</p>
+              <div class="codeblock">
+                <button class="copy-btn" data-copy="Leia o CLAUDE.md e me ajuda com o framework Pudim.">Copiar</button>
+                <pre>Leia o CLAUDE.md e me ajuda com o framework Pudim.</pre>
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <div class="tab-panel" data-panel="copilot">
+        <ol class="steps">
+          <li class="step">
+            <div class="step-illustration">
+              <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#F0B84E"/><rect x="20" y="16" width="10" height="10" rx="2" fill="#2A1200"/><rect x="34" y="16" width="10" height="10" rx="2" fill="#2A1200"/><rect x="20" y="30" width="10" height="10" rx="2" fill="#2A1200"/><rect x="34" y="30" width="10" height="10" rx="2" fill="#2A1200"/></svg>
+            </div>
+            <div class="step-body">
+              <h3>1. Instale as extensões</h3>
+              <p>No VS Code, <code>Ctrl+Shift+X</code> e instale <strong>GitHub Copilot</strong> e <strong>GitHub Copilot Chat</strong>.</p>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-illustration">
+              <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#9A4A0E"/><rect x="16" y="16" width="32" height="24" rx="3" fill="#F2E8D2"/><rect x="16" y="16" width="32" height="6" rx="3" fill="#DE9C2E"/><rect x="20" y="30" width="24" height="4" rx="2" fill="#9A4A0E"/></svg>
+            </div>
+            <div class="step-body">
+              <h3>2. Copie os arquivos do Pudim</h3>
+              <p>Copie <code>pudim/</code> e <code>.github/</code> (skills, prompts, agents) para o seu projeto. Depois:</p>
+              <div class="codeblock">
+                <button class="copy-btn" data-copy="cp pudim/templates/AGENTS.md AGENTS.md
+cp pudim/templates/STATUS.md STATUS.md">Copiar</button>
+                <pre>cp pudim/templates/AGENTS.md AGENTS.md
+cp pudim/templates/STATUS.md STATUS.md</pre>
+              </div>
+            </div>
+          </li>
+          <li class="step">
+            <div class="step-illustration">
+              <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="#F0B84E"/><path d="M20 26c0-6 5-10 12-10s12 4 12 10c0 5-3 7-6 9v3h-12v-3c-3-2-6-4-6-9z" fill="#2A1200"/><circle cx="32" cy="44" r="2" fill="#2A1200"/></svg>
+            </div>
+            <div class="step-body">
+              <h3>3. Abra o Copilot Chat</h3>
+              <p>Ícone de chat na barra lateral (<code>Ctrl+Alt+I</code>) e digite:</p>
+              <div class="codeblock">
+                <button class="copy-btn" data-copy="/pudim-iniciar">Copiar</button>
+                <pre>/pudim-iniciar</pre>
+              </div>
+              <p>Se aparecer a sugestão do Pudim, funcionou.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="fluxo">
+      <h2>O fluxo do Pudim</h2>
+      <p>Toda tarefa passa pelas mesmas etapas, sem pular:</p>
+      <div class="flow-diagram">
+        <div class="flow-node"><strong>CONST</strong><span>uma vez, no início</span></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node"><strong>SPEC</strong><span>o que vai ser feito</span></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node"><strong>TASKS</strong><span>quebra em subtarefas</span></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node"><strong>BUILD</strong><span>constrói o código</span></div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node"><strong>VALIDATION</strong><span>confirma com evidência</span></div>
+      </div>
+      <div class="card">
+        <strong>Gates que bloqueiam o fluxo</strong>
+        <ul>
+          <li><code>/pudim-tarefa-fechar</code> não fecha se o <code>SPEC.md</code> não estiver com <code>Status: Approved</code>.</li>
+          <li><code>/pudim-tarefa-fechar</code> não fecha sem evidência real em cada critério de aceite do <code>VALIDATION.md</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="comandos">
+      <h2>Comandos</h2>
+      <div class="card-grid">
+        <div class="card command-card">
+          <h3>/pudim-const <span class="badge">comece aqui</span></h3>
+          <p>Cria o <code>CONST.md</code> — as regras inegociáveis do projeto. Faz 6 perguntas e pede sua aprovação. Rode uma vez, antes de qualquer tarefa.</p>
+        </div>
+        <div class="card command-card">
+          <h3>/pudim-iniciar</h3>
+          <p>Começa uma tarefa do zero: pergunta objetivo, cria o card no <code>STATUS.md</code> e gera SPEC + TASKS + VALIDATION.</p>
+        </div>
+        <div class="card command-card">
+          <h3>/pudim-tarefa-registrar</h3>
+          <p>Registra só o card no <code>STATUS.md</code>, sem detalhar a especificação ainda.</p>
+        </div>
+        <div class="card command-card">
+          <h3>/pudim-tarefa-criar TASK-XYZ</h3>
+          <p>Gera o pacote completo da tarefa: <code>SPEC.md</code>, <code>TASKS.md</code> e <code>VALIDATION.md</code> em <code>pudim/specs/TASK-XYZ/</code>.</p>
+        </div>
+        <div class="card command-card">
+          <h3>/pudim-tarefa-validar TASK-XYZ</h3>
+          <p>Revisa a SPEC e, se estiver completa, marca <code>Status: Approved</code> — libera a fase de execução (não fecha a task).</p>
+        </div>
+        <div class="card command-card">
+          <h3>/pudim-tarefa-fechar TASK-XYZ</h3>
+          <p>Verifica SPEC aprovada, revisa critérios de aceite com evidência e fecha a task no <code>STATUS.md</code> se tudo passou.</p>
+        </div>
+        <div class="card command-card">
+          <h3>/pudim-status</h3>
+          <p>Mostra o board completo + o contexto da task prioritária. Aceita <code>TASK-XYZ</code> (task específica) ou <code>CONTEXTO</code> (só o resumo). Sempre read-only.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="executar">
+      <h2>Executar scripts</h2>
+      <p>
+        Roda os scripts não-interativos de verdade, com a saída aparecendo abaixo em tempo real.
+        <code>setup.sh</code> é interativo e por isso não tem botão aqui — use a versão
+        "copiar comando" da seção de instalação.
+      </p>
+      <div id="scripts-container" class="card-grid"></div>
+      <template id="script-card-template">
+        <div class="card script-card" data-name="">
+          <h3 class="script-title"></h3>
+          <p class="script-description"></p>
+          <p class="script-warning" hidden></p>
+          <div class="script-controls">
+            <button class="icon-btn run-btn" type="button">▶ Executar</button>
+            <button class="icon-btn stop-btn" type="button" disabled>Parar</button>
+            <span class="script-status">ocioso</span>
+          </div>
+          <pre class="terminal" aria-live="polite"></pre>
+        </div>
+      </template>
+    </section>
+
+    <section id="primeira-tarefa">
+      <h2>Sua primeira tarefa</h2>
+      <p>Exemplo completo, do zero até o fechamento (adaptado da Cartilha):</p>
+      <ol class="steps">
+        <li class="step">
+          <div class="step-body">
+            <h3>1. Crie a tarefa</h3>
+            <div class="codeblock">
+              <button class="copy-btn" data-copy="/pudim-tarefa-registrar">Copiar</button>
+              <pre>/pudim-tarefa-registrar</pre>
+            </div>
+            <p>Responda com o nome, ex.: <em>"Criar página inicial do site"</em>. O board fica:</p>
+            <div class="codeblock">
+              <pre>- [ ] TASK-001 | Criar página inicial do site | Depende de: -</pre>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <div class="step-body">
+            <h3>2. Abra e aprove a especificação</h3>
+            <div class="codeblock">
+              <button class="copy-btn" data-copy="/pudim-tarefa-criar TASK-001">Copiar</button>
+              <pre>/pudim-tarefa-criar TASK-001</pre>
+            </div>
+            <p>Preencha objetivo, escopo (dentro/fora) e critérios de aceite verificáveis. Depois:</p>
+            <div class="codeblock">
+              <button class="copy-btn" data-copy="/pudim-tarefa-validar TASK-001">Copiar</button>
+              <pre>/pudim-tarefa-validar TASK-001</pre>
+            </div>
+          </div>
+        </li>
+        <li class="step">
+          <div class="step-body">
+            <h3>3. Implemente subtarefa por subtarefa</h3>
+            <p>Siga a ordem de dependências do <code>TASKS.md</code>. Marque <code>[x]</code> conforme for concluindo. Rode <code>/pudim-status</code> a qualquer momento para conferir o andamento.</p>
+          </div>
+        </li>
+        <li class="step">
+          <div class="step-body">
+            <h3>4. Feche com evidência</h3>
+            <div class="codeblock">
+              <button class="copy-btn" data-copy="/pudim-tarefa-fechar TASK-001">Copiar</button>
+              <pre>/pudim-tarefa-fechar TASK-001</pre>
+            </div>
+            <p>A IA verifica cada critério de aceite e pede evidência real antes de marcar <code>[x]</code> no <code>STATUS.md</code>.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section id="faq">
+      <h2>Erros comuns / FAQ</h2>
+      <details class="faq">
+        <summary>"Vou codar primeiro e preencher a spec depois"</summary>
+        <p>A IA não vai respeitar o escopo porque ele não estava definido. SPEC sempre primeiro — leva 5 minutos e evita horas de retrabalho.</p>
+      </details>
+      <details class="faq">
+        <summary>"Vou fazer 3 tarefas ao mesmo tempo"</summary>
+        <p>Você perde o fio e fica difícil saber o que está pronto de verdade. Uma tarefa por vez, feche antes de abrir a próxima.</p>
+      </details>
+      <details class="faq">
+        <summary>"Critério de aceite: deve funcionar corretamente"</summary>
+        <p>Isso não é verificável. Seja específico: "o formulário exibe mensagem de erro quando o email é inválido".</p>
+      </details>
+      <details class="faq">
+        <summary>"Já acabei, vou só marcar como concluído"</summary>
+        <p>Sem evidência, ninguém sabe se realmente acabou. Use <code>/pudim-tarefa-fechar TASK-XYZ</code> — a IA confere os critérios com você.</p>
+      </details>
+      <details class="faq">
+        <summary>O comando /pudim-iniciar não aparece no Copilot</summary>
+        <p>Possíveis causas: a pasta <code>.github/prompts/</code> não foi copiada, o Copilot Chat não está instalado, ou o arquivo <code>pudim-iniciar.prompt.md</code> está com nome errado. Veja o checklist completo no <code>pudim/INSTALL.md</code>.</p>
+      </details>
+    </section>
+
+    <footer>
+      Portal do Pudim — manual visual + execução real de scripts não-interativos com logs em tempo real.
+    </footer>
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

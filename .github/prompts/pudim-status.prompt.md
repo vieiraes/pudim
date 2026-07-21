@@ -11,18 +11,38 @@ Você é o assistente do framework Pudim SDD.
 
 ## Input
 
-- **Argumento opcional:** `TASK-XYZ` (ex: TASK-001, TASK-002)
-  - Se fornecido: exibe **apenas aquela task** (detalhes completos, mesmo que concluída)
-  - Se omitido: exibe **o board inteiro** com todas as colunas (comportamento padrão)
+- **Argumento opcional:** `TASK-XYZ` (ex: TASK-001, TASK-002) ou `CONTEXTO`
+  - Se `TASK-XYZ`: exibe **apenas aquela task** (detalhes completos, mesmo que concluída)
+  - Se `CONTEXTO` (alias): exibe **apenas o bloco de contexto da task prioritária**, sem o board inteiro
+  - Se omitido: exibe **o board inteiro** com todas as colunas e, ao final, o contexto da task prioritária (comportamento padrão)
 
 ## Validação do argumento
 
 Se um argumento for fornecido:
-1. Verifique se tem formato `TASK-###` (números)
-2. Se inválido: exiba mensagem de erro e sugira `/pudim-status` sem argumento
-3. Se válido: procure a task no STATUS.md
+1. Se o argumento for literalmente `CONTEXTO` (case-insensitive): pule a validação de formato e vá direto para "Determinação da task prioritária" — exiba só o bloco de contexto.
+2. Caso contrário, verifique se tem formato `TASK-###` (números)
+3. Se inválido: exiba mensagem de erro e sugira `/pudim-status` sem argumento
+4. Se válido: procure a task no STATUS.md
    - Se não encontrada: informe que a task não existe e mostre o board inteiro
    - Se encontrada: continue para "Exibir task específica"
+
+## Determinação da task prioritária
+
+Use esta ordem, na primeira que encontrar uma task correspondente, pare:
+
+1. Task **Em Andamento** (`- [ ]` com pasta `pudim/specs/TASK-XYZ/`) cuja SPEC **não está** `Approved`.
+2. Se nenhuma acima: task **Em Andamento** cuja SPEC **está** `Approved` (a primeira encontrada na ordem do STATUS.md).
+3. Se nenhuma acima: a próxima task **A Fazer** (`- [ ]` sem pasta de spec pack) que **não esteja bloqueada** por dependência pendente.
+4. Se nenhuma das anteriores existir (tudo concluído ou tudo bloqueado): não há task prioritária — informe isso no bloco de contexto.
+
+Para a task prioritária, monte um resumo curto com:
+- **ID**
+- **Título**
+- **Coluna atual** (A Fazer / Em Andamento / Bloqueada)
+- **Próxima ação sugerida**:
+  - SPEC não aprovada → `/pudim-tarefa-validar TASK-XYZ`
+  - SPEC aprovada, subtasks pendentes → continuar o build da subtask em aberto
+  - Sem spec pack → `/pudim-tarefa-criar TASK-XYZ`
 
 ## O que ler
 
@@ -70,6 +90,29 @@ Se um argumento for fornecido:
 💡 PRÓXIMO PASSO SUGERIDO
    -> TASK-002 está em andamento mas a SPEC ainda não foi aprovada.
        Use: /pudim-tarefa-validar TASK-002
+
+🧭 CONTEXTO DA TASK PRIORITARIA
+   ID                 | TASK-002
+   Titulo             | API de usuários
+   Coluna atual       | Em Andamento
+   Proxima acao       | /pudim-tarefa-validar TASK-002
+```
+
+## Formato de saída — Contexto isolado (argumento CONTEXTO)
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  🍮  PUDIM SDD - Contexto da task prioritária                ║
+╚══════════════════════════════════════════════════════════════╝
+
+🧭 CONTEXTO DA TASK PRIORITARIA
+   ID                 | TASK-002
+   Titulo             | API de usuários
+   Coluna atual       | Em Andamento
+   Proxima acao       | /pudim-tarefa-validar TASK-002
+
+──────────────────────────────────────────────────────────────
+Para ver o board inteiro: /pudim-status
 ```
 
 ## Formato de saída — Task específica (com argumento TASK-XYZ)
@@ -120,6 +163,14 @@ Para ver o board inteiro: /pudim-status
    - Se tudo estiver em andamento e aprovado -> sugerir continuar o build
    - Se tudo estiver feito -> parabenizar e sugerir nova task com `/pudim-iniciar`
 - Se o STATUS.md estiver vazio, exiba mensagem de boas-vindas e sugira `/pudim-iniciar`.
+- Sempre que exibir o board inteiro, calcule a task prioritária (ver "Determinação da task prioritária") e anexe o bloco `🧭 CONTEXTO DA TASK PRIORITARIA` ao final, após "Próximo passo sugerido".
+- Se não houver task prioritária (tudo concluído), o bloco de contexto informa isso em vez de dados de uma task.
+
+### Contexto isolado (argumento CONTEXTO)
+
+- Calcule a task prioritária pela mesma regra usada no board inteiro.
+- Exiba **apenas** o bloco `🧭 CONTEXTO DA TASK PRIORITARIA`, sem o board completo.
+- Ao final, sempre exiba: "Para ver o board inteiro: /pudim-status".
 
 ### Task específica (com argumento TASK-XYZ)
 

@@ -9,3 +9,8 @@ Formato: uma linha por task, estilo card Jira, com status simples e dependencias
 
 - [x] TASK-001 | Harness leve de validação do fluxo Pudim SDD | Depende de: -
 - [x] TASK-002 | Permitir /pudim-status com argumento para task específica | Depende de: -
+- [x] TASK-003 | Incrementar contexto no comando /pudim-status | Depende de: -
+- [x] TASK-004 | Fechamento de tarefa deve exigir SPEC.md com Status Approved | Depende de: -
+- [x] TASK-005 | Novo logo/brand do Pudim (SVG moderno e minimalista) | Depende de: -
+- [x] TASK-006 | Portal Pudim — fundação + manual visual (sem execução) | Depende de: TASK-005
+- [x] TASK-007 | Portal Pudim — execução real de scripts + logs em tempo real (SSE) | Depende de: TASK-006

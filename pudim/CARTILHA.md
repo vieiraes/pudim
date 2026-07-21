@@ -90,6 +90,11 @@ por projeto             partes      o código    funciona
 
 ## Parte 2 — Instalação
 
+> **Prefere ver em vez de ler?** Depois de copiar os arquivos (Passo 3 abaixo), você pode rodar
+> `cd portal && npm install && npm start` e abrir `http://127.0.0.1:4444` para seguir este mesmo
+> guia em formato visual, com botão de copiar comando. O texto abaixo continua valendo — é a
+> mesma instalação, só que em `.md`.
+
 ### O que você precisa antes de começar
 
 - **VS Code** instalado ([baixar aqui](https://code.visualstudio.com/))
@@ -133,6 +138,7 @@ seu-projeto/
     assets/
     templates/
     specs/
+  portal/                         ← opcional: manual visual (npm install && npm start)
   .github/                        ← copie essa pasta inteira
     skills/
       pudim-sdd/
@@ -225,6 +231,7 @@ Após a instalação, confirme que esses arquivos existem:
 - [ ] `pudim/setup.sh`
 - [ ] `STATUS.md`
 - [ ] `AGENTS.md`
+- [ ] `portal/` (opcional, manual visual)
 
 Se estiver usando Copilot, confirme também:
 
@@ -510,8 +517,9 @@ Para confirmar o fechamento no board, rode `/pudim-status`.
 | `/pudim-tarefa-criar TASK-XYZ` | Card já existe, quer detalhar a tarefa agora |
 | `/pudim-tarefa-validar TASK-XYZ` | Terminou a especificação e quer aprovar para seguir |
 | `/pudim-tarefa-fechar TASK-XYZ` | Implementação concluída, quer validar e fechar |
-| `/pudim-status` | Quer ver o board completo |
+| `/pudim-status` | Quer ver o board completo (já inclui o contexto da task prioritária) |
 | `/pudim-status TASK-XYZ` | Quer ver o status de uma task específica (mesmo fechada) |
+| `/pudim-status CONTEXTO` | Quer ver só o resumo da task prioritária, sem o board inteiro |
 
 ### Arquivos que você vai editar
 

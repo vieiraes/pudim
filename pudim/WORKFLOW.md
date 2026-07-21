@@ -95,7 +95,12 @@ Antes do board e antes da primeira task, existe uma etapa zero:
 > Comando: `/pudim-tarefa-fechar TASK-XYZ`
 > Arquivo: `pudim/specs/TASK-XYZ/VALIDATION.md`
 
-**Gate de saída:** VALIDATION com status `Passed` e STATUS.md atualizado.
+**Pré-condição obrigatória:** `/pudim-tarefa-fechar` verifica, antes de qualquer coisa, que
+`SPEC.md` está com `Status: Approved`. Se não estiver, o fechamento é bloqueado e a task
+permanece aberta — mesmo que o `VALIDATION.md` já tenha evidências preenchidas.
+
+**Gate de saída:** SPEC com `Status: Approved`, VALIDATION com status `Passed` e STATUS.md
+atualizado.
 
 ---
 

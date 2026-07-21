@@ -4,6 +4,9 @@ Referência rápida de todos os comandos disponíveis.
 
 Use no **GitHub Copilot Chat** digitando `/` ou peça ao **Claude Code** pelo nome do comando.
 
+> Prefere ver estes comandos em cards visuais? Rode `cd portal && npm install && npm start` e
+> abra `http://127.0.0.1:4444`.
+
 ---
 
 ## `/pudim-const` ⭐ Comece aqui
@@ -100,31 +103,40 @@ pudim/specs/TASK-003/VALIDATION.md
 ```
 
 **O agente vai:**
-1. Revisar os critérios de aceite da SPEC.
-2. Verificar se há evidências no VALIDATION.md.
-3. Dar um resultado: `Passed` ou `Failed` com próximos passos.
-4. Atualizar o STATUS.md se aprovado.
+1. Verificar que `SPEC.md` e `VALIDATION.md` existem — se algum faltar, avisa e para.
+2. Verificar que `SPEC.md` está com `Status: Approved` — se não estiver, **bloqueia o
+   fechamento** e informa que é preciso rodar `/pudim-tarefa-validar` antes.
+3. Revisar os critérios de aceite da SPEC.
+4. Verificar se há evidências no VALIDATION.md.
+5. Dar um resultado: `Passed` ou `Failed` com próximos passos.
+6. Atualizar o STATUS.md se aprovado.
 
-> Regra: task só fecha se **todos** os critérios estiverem validados.
+> Regra: task só fecha se a SPEC estiver **Approved** e **todos** os critérios estiverem
+> validados com evidência.
 
 ---
 
 ## `/pudim-status`
 
-**O que faz:** Exibe o board atual do projeto. Suporta argumento opcional para exibir uma task específica.
+**O que faz:** Exibe o board atual do projeto. No modo padrão, já inclui o contexto da task não finalizada prioritária. Suporta argumento opcional para exibir uma task específica ou apenas o contexto isolado.
 
-**Quando usar:** A qualquer momento do fluxo, para ver o que está em andamento, o que falta e o que já foi feito.
+**Quando usar:** A qualquer momento do fluxo, para ver o que está em andamento, o que falta e o que já foi feito — ou para retomar rapidamente qual é a próxima ação.
 
 **Como usar:**
 
-### Sem argumento (padrão - exibe board inteiro)
+### Sem argumento (padrão - exibe board inteiro + contexto da task prioritária)
 ```
 /pudim-status
 ```
 
-### Com argumento (exibe apenas uma task)
+### Com argumento TASK-XYZ (exibe apenas uma task)
 ```
 /pudim-status TASK-001
+```
+
+### Com argumento CONTEXTO (exibe apenas o bloco de contexto da task prioritária)
+```
+/pudim-status CONTEXTO
 ```
 
 **Resultado esperado (board inteiro):**
@@ -135,7 +147,15 @@ A FAZER          EM ANDAMENTO     FEITO
 TASK-002         TASK-001         —
 TASK-003
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🧭 CONTEXTO DA TASK PRIORITARIA
+   ID           | TASK-001
+   Titulo       | Tela de login
+   Coluna atual | Em Andamento
+   Proxima acao | continuar o build
 ```
+
+A task prioritária é escolhida nesta ordem: (1) task em andamento com SPEC não aprovada, (2) task em andamento com SPEC aprovada, (3) próxima task desbloqueada sem spec pack.
 
 **Resultado esperado (task específica):**
 ```
@@ -159,7 +179,7 @@ Especificação   | ✅ Aprovada
 | `/pudim-tarefa-criar TASK-XYZ` | Gera pacote da tarefa | pudim/specs/TASK-XYZ/ |
 | `/pudim-tarefa-validar TASK-XYZ` | Aprova a especificação e libera execução | SPEC.md |
 | `/pudim-tarefa-fechar TASK-XYZ` | Valida e fecha | VALIDATION.md + STATUS.md |
-| `/pudim-status` | Exibe o board (sem args) ou task específica (com TASK-XYZ) | — |
+| `/pudim-status` | Exibe o board + contexto prioritário (sem args), task específica (TASK-XYZ) ou só o contexto (CONTEXTO) | — |
 
 ---
 

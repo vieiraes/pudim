@@ -1,13 +1,40 @@
 # Pudim
 
 <p align="center">
-   <img src="https://cdn-icons-png.flaticon.com/512/3465/3465429.png" width="120" alt="Pudim logo" />
+   <img src="pudim/assets/pudim-icon.svg" width="120" alt="Pudim logo" />
 </p>
 
 <p align="center">
   <strong>O framework simples para Dev.</strong><br/>
   Em português. Passo a passo. Sem complicação.
 </p>
+
+---
+
+## Antes de tudo: ferramenta, framework ou este repo?
+
+Se você chegou aqui confuso sobre "estou desenvolvendo no Claude/Copilot ou pelo Pudim?", a
+resposta é: **sempre na ferramenta de IA** (Claude Code ou GitHub Copilot). "Pelo Pudim" é a
+*disciplina* que essa ferramenta passa a seguir dentro de um projeto — não é uma alternativa a
+ela. É a diferença entre o carro (a ferramenta) e o piloto automático (o Pudim): você continua
+dirigindo o mesmo carro, só que com um modo de operar mais disciplinado.
+
+Isso fica especialmente confuso **neste repositório específico**, porque ele faz duas coisas ao
+mesmo tempo:
+
+1. **É o código-fonte do produto Pudim** — os arquivos que você copia para o SEU projeto:
+   `pudim/templates/*`, `pudim/{README,COMMANDS,CARTILHA,WORKFLOW,INSTALL}.md`,
+   `pudim/{setup,validate-project,install-hooks}.sh` e `.github/{prompts,skills,agents}/`.
+2. **Usa o próprio Pudim para se desenvolver** (dogfooding) — `STATUS.md`, `CONST.md`,
+   `AGENTS.md`, `CLAUDE.md`, `.github/copilot-instructions.md` e `pudim/specs/TASK-00X/` na
+   raiz **não são exemplos genéricos**: são o board e as specs reais de construção do próprio
+   framework Pudim (TASK-001, TASK-002... = tarefas de desenvolver o Pudim em si).
+
+Regra prática: **arquivo em `pudim/templates/` ou prompt em `.github/` → copiável para outro
+projeto. Arquivo solto na raiz (STATUS/CONST/AGENTS/CLAUDE) ou pasta com número de task
+(`pudim/specs/TASK-00X/`) → é deste repo, não copie.** Quando você instala o Pudim em outro
+projeto (ver [INSTALL.md](pudim/INSTALL.md) e [CARTILHA.md](pudim/CARTILHA.md)), aquele projeto
+cria seu **próprio** STATUS.md/CONST.md/specs, totalmente independente do board deste repo.
 
 ---
 
@@ -54,6 +81,24 @@ o quê    em partes  o código    que funciona
 - Devs que usam **GitHub Copilot** ou **Claude Code** no dia a dia
 - Times que precisam de **rastreabilidade simples** sem burocracia
 - Qualquer pessoa que já perdeu horas com retrabalho por falta de alinhamento
+
+---
+
+## Portal do Pudim (via visual)
+
+Prefere ver passo a passo em vez de ler vários `.md` em sequência? Rode o portal local:
+
+```bash
+cd portal
+npm install
+npm start
+```
+
+Abra `http://127.0.0.1:4444` — manual visual com instalação (Claude Code + Copilot), o fluxo
+SPEC→TASKS→BUILD→VALIDATION, todos os comandos e um walkthrough da primeira tarefa. O portal
+também **executa de verdade** `validate-project.sh` e `install-hooks.sh` (allowlist fixa, ver
+[portal/README.md](portal/README.md)), com os logs em tempo real na própria página — `setup.sh`
+continua só com "copiar comando" por ser interativo.
 
 ---
 
