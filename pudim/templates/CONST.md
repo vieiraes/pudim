@@ -1,7 +1,7 @@
 # CONST.md — Regras Inegociáveis do Projeto
 
 > Estas regras não são sugestões. Discuta **antes** de codar, não depois.
-> Máximo: 50 linhas. Linguagem direta e crua.
+> Curto e direto: é uma constituição, não documentação extensa. Linguagem crua, sem firulas.
 
 ---
 
@@ -12,7 +12,10 @@
 - Repositório:
 - Data de criação:
 
----
+## Objetivo e sucesso
+
+- O que este projeto faz (uma frase):
+- Deu certo quando:
 
 ## Stack técnica
 
@@ -22,8 +25,6 @@
 - Versão mínima do runtime:
 - Banco de dados:
 
----
-
 ## Regras de código
 
 - Sem `console.log` de debug no código final.
@@ -32,17 +33,14 @@
 - Testes obrigatórios para lógica crítica.
 - Nomes de variáveis em inglês. Comentários em PT-BR.
 
----
-
 ## Regras de processo (Pudim SDD)
 
 - Sem SPEC aprovada, sem código.
 - Sem evidência no VALIDATION, sem fechar tarefa.
 - Uma tarefa por vez.
 - STATUS.md é o board oficial.
+- **Regra inegociável do projeto:**
 - Este arquivo só muda com consenso do time.
-
----
 
 ## Fora de escopo — nunca fazer
 

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "🟠pudim-framework-desenvolvimento",
+			"path": "."
+		},
+		{
+			"name": "🔵pudim-landingpage",
+			"path": "../pudim-landingpage"
+		}
+	],
+	"settings": {}
+}

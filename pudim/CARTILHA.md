@@ -305,7 +305,7 @@ Tipos de bump:
 
 ### Primeiro: crie o CONST.md
 
-**CONST.md** é o documento de regras inegociáveis do projeto. Ele é criado **uma única vez**, antes de qualquer tarefa.
+**CONST.md** é a **constituição** do projeto: as regras inegociáveis que valem para toda feature. Ele é criado **uma única vez**, antes de qualquer tarefa, e depois é consultado pelos comandos de tarefa (uma task que fura o "fora de escopo" ou a regra inegociável é sinalizada).
 
 Se o wizard já criou o arquivo para você, edite-o com os dados reais do projeto.
 Se ainda não tem, use o comando:
@@ -320,7 +320,7 @@ Se ainda não tem, use o comando:
 /pudim-const
 ```
 
-O agente vai fazer 6 perguntas (uma de cada vez) e gerar o `CONST.md` preenchido.
+O agente vai fazer 6 perguntas socráticas (uma de cada vez) — inclusive "quando este projeto der certo, o que vai estar funcionando?" e "qual a regra que, se quebrada, compromete o projeto?". **Você não precisa saber tecnologia:** descreva sua ideia em linguagem simples (ex.: "quero mandar um link pro meu amigo e a gente joga em tempo real") e a IA propõe a stack e explica. Depois ele apresenta um **Plano de Ação** (proposta de constituição) para você **aceitar ou contestar**, e só então gera o `CONST.md` preenchido.
 
 ### Agora: crie sua primeira tarefa
 

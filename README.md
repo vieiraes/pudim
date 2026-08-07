@@ -131,7 +131,7 @@ No Copilot Chat ou Claude, digite:
 /pudim-const
 ```
 
-A IA faz 6 perguntas e gera o `CONST.md` (CONSTANTE)— as regras inegociáveis do projeto. Faça isso **uma vez**, antes de qualquer tarefa.
+A IA faz 6 perguntas socráticas (uma de cada vez), apresenta um **Plano de Ação** (proposta de constituição) que você **aceita ou contesta**, e só então gera o `CONST.md` (CONSTANTE) — as regras inegociáveis do projeto. Faça isso **uma vez**, antes de qualquer tarefa.
 
 ### Passo 4 — Crie sua primeira tarefa
 

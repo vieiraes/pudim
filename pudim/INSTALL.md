@@ -43,6 +43,15 @@ seu-projeto/
 > ```
 > Depois preencha o `AGENTS.md` com as regras do seu projeto.
 
+> **Esvazie `pudim/specs/` após copiar.** A pasta `pudim/` traz os spec packs (`TASK-*`) do
+> projeto de exemplo. Eles são do Pudim, não do seu projeto — se ficarem, o harness vai acusá-los
+> como spec packs órfãos. Limpe-os:
+>
+> ```bash
+> rm -rf pudim/specs/TASK-*
+> ```
+> Os seus spec packs serão criados por `/pudim-tarefa-criar` conforme você abre tarefas.
+
 ### 3. Teste
 
 Abra o Copilot Chat (`Ctrl+Alt+I`) e digite:
@@ -78,6 +87,14 @@ seu-projeto/
 > cp pudim/templates/STATUS.md STATUS.md
 > ```
 > Depois preencha o `AGENTS.md` com as regras do seu projeto.
+
+> **Esvazie `pudim/specs/` após copiar.** A pasta `pudim/` traz os spec packs (`TASK-*`) do
+> projeto de exemplo — remova-os para não herdar spec packs órfãos:
+>
+> ```bash
+> rm -rf pudim/specs/TASK-*
+> ```
+> Os seus spec packs serão criados por `/pudim-tarefa-criar` conforme você abre tarefas.
 
 ### 3. Teste
 
@@ -115,6 +132,7 @@ Leia o CLAUDE.md e me ajuda com o framework Pudim.
 - [ ] `portal/` ← opcional (manual visual): `server.js`, `package.json`, `public/`
 - [ ] `AGENTS.md` ← criado a partir do template, preenchido com seu projeto
 - [ ] `STATUS.md` ← criado a partir do template (começa vazio)
+- [ ] `pudim/specs/` ← esvaziado (`rm -rf pudim/specs/TASK-*`); não herde os spec packs do exemplo
 - [ ] `CLAUDE.md` ← criado a partir do template (se usar Claude Code)
 
 Apenas para Copilot:

@@ -11,16 +11,18 @@ Use no **GitHub Copilot Chat** digitando `/` ou peça ao **Claude Code** pelo no
 
 ## `/pudim-const` ⭐ Comece aqui
 
-**O que faz:** Cria o `CONST.md` — as regras inegociáveis do projeto.
+**O que faz:** Cria o `CONST.md` — a constituição do projeto (regras inegociáveis que valem para toda feature).
 
 **Quando usar:** **Sempre primeiro.** Antes de qualquer tarefa, em qualquer projeto novo.
 
 **O agente vai:**
-1. Fazer 6 perguntas rápidas (uma de cada vez).
-2. Gerar o `CONST.md` preenchido na raiz do projeto.
-3. Pedir sua aprovação antes de salvar.
+1. Fazer 6 perguntas socráticas (uma de cada vez): propósito, definição de sucesso, stack, o que o projeto **não** vai fazer, a regra inegociável e o responsável. Você não precisa saber tecnologia: descreva a ideia em linguagem simples e a IA propõe e explica a stack.
+2. Apresentar um **Plano de Ação** (proposta de constituição) no chat para você **aceitar ou contestar**.
+3. Só depois do seu aceite, gerar o `CONST.md` preenchido na raiz do projeto.
 
-> Arquivo gerado: `CONST.md` (na raiz do projeto)
+Depois de pronto, o `CONST.md` é consultado por `/pudim-tarefa-criar` e `/pudim-tarefa-validar`: uma task que fura o "fora de escopo" ou a regra inegociável é sinalizada antes de seguir.
+
+> Arquivo gerado: `CONST.md` (na raiz do projeto). Nenhum outro arquivo é criado — o Plano de Ação vive no chat.
 
 ---
 

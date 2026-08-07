@@ -1,7 +1,7 @@
 # CONST.md — Regras Inegociáveis do Projeto
 
 > Estas regras não são sugestões. Discuta **antes** de codar, não depois.
-> Máximo: 50 linhas. Linguagem direta e crua.
+> Curto e direto: é uma constituição, não documentação extensa. Linguagem crua, sem firulas.
 
 ---
 

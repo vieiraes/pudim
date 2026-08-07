@@ -37,7 +37,7 @@ RESET='\033[0m'
 
 # --- Funções de UI -----------------------------------------------------------
 print_header() {
-  clear
+  clear 2>/dev/null || true
   echo ""
   echo -e "${BLUE}${BOLD}╔══════════════════════════════════════════════╗${RESET}"
   echo -e "${BLUE}${BOLD}║   🍮  Pudim SDD — Wizard de Setup            ║${RESET}"
@@ -197,12 +197,6 @@ print_step 4 "Verificando CONST.md (regras inegociáveis)"
 
 if [ -f "CONST.md" ]; then
   ok "CONST.md encontrado na raiz do projeto."
-  LINES=$(wc -l < CONST.md)
-  if [ "$LINES" -gt 50 ]; then
-    warn "CONST.md tem $LINES linhas. O limite recomendado é 50."
-  else
-    ok "Tamanho OK: $LINES linhas."
-  fi
 else
   warn "CONST.md não encontrado — ele deve ser o PRIMEIRO arquivo do projeto."
   if ask_confirm "Quer criar o CONST.md agora a partir do template?"; then

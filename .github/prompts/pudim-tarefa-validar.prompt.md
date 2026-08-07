@@ -18,6 +18,11 @@ Você é o assistente do framework Pudim SDD.
    - Critérios de aceite verificáveis (mínimo 3)
    - Riscos principais preenchidos
 
+2.1. Coerência com a constituição: leia `CONST.md` na raiz, **se existir**, e confira se a SPEC
+   não contradiz a seção **Fora de escopo — nunca fazer** nem a **regra inegociável do projeto**.
+   Se contradisser, trate como lacuna (❌) — não aprove uma SPEC que fura a constituição. Se
+   `CONST.md` não existir, marque este item como N/A e siga.
+
 3. Exiba uma tabela de resultado:
 
 | Item | Status | Observação |
@@ -27,6 +32,7 @@ Você é o assistente do framework Pudim SDD.
 | Escopo fora | ✅ Passou / ❌ Falhou | |
 | Critérios de aceite | ✅ Passou / ❌ Falhou | |
 | Riscos | ✅ Passou / ❌ Falhou | |
+| Coerência com CONST.md | ✅ Passou / ❌ Falhou / N/A | |
 
 4. Se **todos passaram:**
    - Atualize o `SPEC.md` com status `Approved`.

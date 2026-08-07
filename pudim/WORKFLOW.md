@@ -22,17 +22,23 @@ Antes do board e antes da primeira task, existe uma etapa zero:
 
 ### Etapa 0 — CONST (uma vez por projeto)
 
-**Objetivo:** definir as regras inegociáveis do projeto antes de qualquer coisa.
+**Objetivo:** definir a constituição do projeto — as regras inegociáveis que valem para toda feature — antes de qualquer coisa.
 
+O `/pudim-const` faz 6 perguntas socráticas (uma por vez):
+
+- Qual o propósito do projeto e a **definição de sucesso** ("deu certo quando…")?
 - Qual é a stack técnica?
-- O que está definitivamente fora do escopo?
-- Quais são as regras de código e processo?
+- O que o projeto **deliberadamente não** vai fazer (fora de escopo)?
+- Qual é a **regra inegociável** que, se quebrada, compromete o projeto?
+- Quem é o responsável e onde vive o repositório?
+
+Depois das respostas, o agente apresenta um **Plano de Ação** (proposta de constituição) no chat, que o usuário **aceita ou contesta**. Só após o aceite o `CONST.md` é gravado — nenhum outro arquivo de inception é criado.
 
 > Comando: `/pudim-const`
 > Arquivo: `CONST.md` (raiz do projeto)
 > Wizard: `./pudim/setup.sh` para verificar todos os pré-requisitos
 
-**Gate de saída:** CONST.md aprovado, assinado e na raiz do projeto.
+**Gate de saída:** CONST.md ratificado, assinado e na raiz do projeto. A partir daí, `/pudim-tarefa-criar` e `/pudim-tarefa-validar` consultam o CONST e sinalizam tasks que furam o "fora de escopo" ou a regra inegociável.
 
 ---
 

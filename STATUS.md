@@ -14,3 +14,5 @@ Formato: uma linha por task, estilo card Jira, com status simples e dependencias
 - [x] TASK-005 | Novo logo/brand do Pudim (SVG moderno e minimalista) | Depende de: -
 - [x] TASK-006 | Portal Pudim — fundação + manual visual (sem execução) | Depende de: TASK-005
 - [x] TASK-007 | Portal Pudim — execução real de scripts + logs em tempo real (SSE) | Depende de: TASK-006
+- [x] TASK-008 | /pudim-const socrático + CONST como constituição real (gate downstream) | Depende de: -
+- [x] TASK-009 | Pós-dogfood: setup robusto + instalador sem specs herdados + /pudim-const amigável a iniciante | Depende de: -

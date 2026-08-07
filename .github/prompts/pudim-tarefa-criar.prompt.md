@@ -17,6 +17,13 @@ Você é o assistente do framework Pudim SDD.
    - Se não existir, informe o usuário e pergunte se deseja registrá-la agora antes de criar o spec pack.
    - Só avance se a task estiver registrada no STATUS.md.
 
+2. Consulte a constituição do projeto: leia `CONST.md` na raiz, **se existir**.
+   - Compare o objetivo/escopo pretendido da task com a seção **Fora de escopo — nunca fazer** e
+     com a **regra inegociável do projeto**.
+   - Se houver conflito, **sinalize claramente** ao usuário e peça confirmação explícita antes de
+     criar o spec pack. Não crie a SPEC de uma task que fura a constituição sem esse aceite.
+   - Se `CONST.md` não existir, apenas siga em frente (não interrompa o fluxo).
+
 1. Verifique se `pudim/specs/${taskId}/` já existe.
 	- Se sim, abra os arquivos e pergunte se o usuário quer atualizar.
 	- Se não, crie a pasta.

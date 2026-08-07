@@ -125,3 +125,47 @@ inicial"). O equivalente aqui a "schema/migration/API pública" é:
 3. Alteracoes realizadas
 4. Validacao (pass/fail por criterio)
 5. Proximo passo
+<!-- cloude-code-toolbox:mcp-skills-awareness-begin -->
+
+### MCP & Skills awareness (Cloude Code ToolBox)
+
+_Last synced: 2026-08-07T22:15:11.461Z._
+
+- **Full report:** `.claude/cloude-code-toolbox-mcp-skills-awareness.md` in this workspace (auto-overwritten on each scan). Use it as ground truth for configured servers and skill folders.
+- **MCP:** For **live tools** in Claude Code, enable the matching server via `/mcp`. Servers are configured in `~/.claude.json` (user) and `.mcp.json` (project).
+- **When the user’s task matches a server** (e.g. Confluence work and a **Confluence** / **Atlassian** MCP is listed), **prefer that server id** and plan on tool use—not only file search.
+- **Skills:** Folders below contain `SKILL.md`; attach or cite paths in chat when relevant.
+
+#### Workspace MCP
+
+- `/home/bruno_vieira/projects/gh/bruno/pudim-framework-desenvolvimento/.mcp.json` _(workspace: pudim-framework-desenvolvimento)_ — _file missing_
+
+_No active workspace servers in mcp.json._
+
+#### User MCP
+
+- `/home/bruno_vieira/.claude.json` — _no servers defined_
+
+_No active user-scoped servers in mcp.json._
+
+#### Project skills
+
+- **plan-feature-slice** — `/home/bruno_vieira/projects/gh/bruno/pudim-framework-desenvolvimento/.github/skills/plan-feature-slice` — Create a vertical-slice implementation plan for this markdown editor. Use when user asks to plan a feature, break down tasks, define acceptance criteria, or sequence delivery.
+
+- **pudim-sdd** — `/home/bruno_vieira/projects/gh/bruno/pudim-framework-desenvolvimento/.github/skills/pudim-sdd` — Run Pudim Spec-Driven Development workflow. Use when: creating a new spec, decomposing into tasks, validating acceptance criteria, and closing a task in STATUS.md.
+
+#### User skills
+
+_All hidden in hub (Turn OFF) or none listed._
+
+_Off in hub (on disk):_ 
+
+- **find-skills** — `/home/bruno_vieira/.agents/skills/find-skills`
+
+- **generic-react-ux-designer** — `/home/bruno_vieira/.agents/skills/generic-react-ux-designer`
+
+- **postman-collection-generator** — `/home/bruno_vieira/.agents/skills/postman-collection-generator`
+
+- **prd-writer** — `/home/bruno_vieira/.agents/skills/prd-writer`
+
+<!-- cloude-code-toolbox:mcp-skills-awareness-end -->
