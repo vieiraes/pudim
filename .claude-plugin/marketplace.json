@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "pudim",
+  "description": "Pudim: testes unitários e E2E sob demanda para projetos JS/TS existentes, em português.",
+  "owner": {
+    "name": "Bruno Vieira",
+    "url": "https://github.com/vieiraes"
+  },
+  "plugins": [
+    {
+      "name": "pudim",
+      "description": "O SDET do seu terminal, em português: /criar-unitario, /criar-e2e, /cobertura e /relatorio.",
+      "source": "./"
+    }
+  ]
+}

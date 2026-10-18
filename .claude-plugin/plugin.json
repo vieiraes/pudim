@@ -1,0 +1,14 @@
+{
+  "name": "pudim",
+  "version": "0.1.0",
+  "description": "O SDET do seu terminal, em português. Entra em um projeto JS/TS que já existe, cria testes unitários e end-to-end quando você pede, mede o que está e o que não está coberto, recusa teste que não testa nada e gera o relatório.",
+  "author": {
+    "name": "Bruno Vieira",
+    "url": "https://github.com/vieiraes"
+  },
+  "homepage": "https://github.com/vieiraes/pudim",
+  "repository": "https://github.com/vieiraes/pudim",
+  "license": "MIT",
+  "keywords": ["qa", "sdet", "testes", "jest", "vitest", "playwright", "cobertura", "pt-br"],
+  "skills": "./skills/"
+}

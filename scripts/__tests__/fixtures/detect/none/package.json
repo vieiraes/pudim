@@ -1,0 +1,1 @@
+{ "name": "fixture-none", "scripts": { "start": "node index.js" } }

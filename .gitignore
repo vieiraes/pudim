@@ -1,12 +1,6 @@
-# Dependencias e build
 node_modules/
-dist/
-build/
-
-# Ambiente
-.env
-.env.local
-.env.*
-
-# Logs
 *.log
+.env
+.env.*
+# Artefatos gerados ao testar o próprio plugin
+scripts/__tests__/tmp/

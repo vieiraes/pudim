@@ -1,0 +1,1 @@
+{ "runner": "jest", "provider": "babel", "command": "npx jest --coverage", "commit": "abc1234", "date": "2026-10-18T00:00:00.000Z" }
