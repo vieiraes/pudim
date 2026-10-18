@@ -1,0 +1,1 @@
+{"config":{"rootDir":"/proj/e2e"},"suites":[{"title":"login.spec.ts","file":"login.spec.ts","specs":[{"title":"entra com e-mail e senha","id":"l1","line":4,"tests":[{"projectName":"chromium","status":"expected","results":[{"status":"passed","duration":800},{"status":"passed","duration":700},{"status":"passed","duration":750}]}]}]}],"errors":[]}

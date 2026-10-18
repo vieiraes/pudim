@@ -1,0 +1,1 @@
+{ "name": "loja-e2e", "devDependencies": { "@playwright/test": "^1.58.0" } }

@@ -107,6 +107,59 @@ const coverageExclude = ['**/*.{test,spec}.*', '**/__tests__/**', '**/__mocks__/
 const workspaces = Boolean(pkg.workspaces || exists('pnpm-workspace.yaml') || exists('lerna.json') ||
   /projects\s*:/.test(jestConfigs.concat(vitestConfigs).map(read).join('\n')));
 
+// ── Como o projeto escreve testes (para os comandos de criação imitarem) ──────
+const IGNORE = new Set(['node_modules', '.git', '.qa', 'coverage', 'dist', 'build', '.next', 'out', 'test-results', 'playwright-report']);
+const allFiles = [];
+(function walk(rel, depth) {
+  if (depth > 12 || allFiles.length > 20000) return;
+  let entries = [];
+  try { entries = fs.readdirSync(path.join(dir, rel), { withFileTypes: true }); } catch { return; }
+  for (const e of entries) {
+    if (IGNORE.has(e.name)) continue;
+    const r = rel ? `${rel}/${e.name}` : e.name;
+    if (e.isDirectory()) walk(r, depth + 1);
+    else allFiles.push(r);
+  }
+})('', 0);
+
+// Diretório de testes E2E e URL base, lidos da config do Playwright (por texto, sem executar).
+const pwText = pwConfigs.map(read).join('\n');
+const pwTestDir = (pwText.match(/testDir\s*:\s*['"`]([^'"`]+)['"`]/) || [])[1];
+const e2eDir = hasPlaywright ? (pwTestDir ? pwTestDir.replace(/^\.\//, '').replace(/\/$/, '') : 'tests') : null;
+const baseURL = (pwText.match(/baseURL\s*:\s*['"`]([^'"`]+)['"`]/) || [])[1] || null;
+const webServer = /webServer\s*:/.test(pwText);
+const inE2eDir = (f) => e2eDir && (f === e2eDir || f.startsWith(`${e2eDir}/`));
+
+const isTest = (f) => /\.(test|spec)\.[cm]?[jt]sx?$/.test(f);
+const unitTests = allFiles.filter((f) => isTest(f) && !inE2eDir(f) && !/(^|\/)(e2e|tests-e2e)\//.test(f));
+const e2eTests = allFiles.filter((f) => isTest(f) && inE2eDir(f));
+
+let testStyle = null;
+if (unitTests.length) {
+  const counts = { '__tests__': 0, 'pasta-tests': 0, 'ao-lado': 0 };
+  for (const f of unitTests) {
+    if (f.includes('__tests__/')) counts['__tests__']++;
+    else if (/^(test|tests)\//.test(f)) counts['pasta-tests']++;
+    else counts['ao-lado']++;
+  }
+  testStyle = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+}
+const ext = (f) => (f.match(/\.(test|spec)\.([cm]?[jt]sx?)$/) || [])[0] || null;
+const mostCommon = (arr) => {
+  const c = {};
+  for (const x of arr) if (x) c[x] = (c[x] || 0) + 1;
+  return Object.entries(c).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0]?.[0] || null;
+};
+const testExt = mostCommon(unitTests.map(ext)) || (exists('tsconfig.json') ? '.test.ts' : '.test.js');
+// Modelo: o menor teste do estilo dominante (mais fácil de imitar).
+const sizeOf = (f) => { try { return fs.statSync(path.join(dir, f)).size; } catch { return Infinity; } };
+const pickExample = (list) => list.slice().sort((a, b) => sizeOf(a) - sizeOf(b) || a.localeCompare(b))[0] || null;
+const testExample = pickExample(unitTests.filter((f) => ext(f) === testExt)) || pickExample(unitTests);
+const e2eExample = pickExample(e2eTests);
+
+const moduleType = pkg.type === 'module' ? 'esm' : 'cjs';
+const vitestGlobals = runner === 'vitest' && /globals\s*:\s*true/.test(vitestConfigs.map(read).join('\n'));
+
 console.log(JSON.stringify({
   runner,
   runnersFound,
@@ -120,5 +173,16 @@ console.log(JSON.stringify({
   sourceDirs,
   coverageInclude,
   coverageExclude,
+  testFiles: unitTests.length,
+  testStyle,
+  testExt,
+  testExample,
+  moduleType,
+  vitestGlobals,
+  e2eDir,
+  e2eFiles: e2eTests.length,
+  e2eExample,
+  baseURL,
+  webServer,
 }));
 JS

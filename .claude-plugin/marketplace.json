@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "pudim",
-  "description": "Pudim: testes unitários e E2E sob demanda para projetos JS/TS existentes, em português.",
+  "description": "Pudim: feito por QA, para QA. O primeiro plugin especialista para QA e SDET em português do Brasil.",
   "owner": {
     "name": "Bruno Vieira",
     "url": "https://github.com/vieiraes"
@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "pudim",
-      "description": "O SDET do seu terminal, em português: /criar-unitario, /criar-e2e, /cobertura e /relatorio.",
+      "description": "O SDET do seu terminal, em português: /pudim:cobertura, /pudim:investigar, /pudim:criar-unitario, /pudim:criar-e2e, /pudim:portal e /pudim:relatorio.",
       "source": "./"
     }
   ]

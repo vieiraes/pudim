@@ -8,6 +8,7 @@ allowed-tools:
   - Grep
   - Bash(bash "${CLAUDE_PLUGIN_ROOT}/scripts/qa-detect.sh" *)
   - Bash(node "${CLAUDE_PLUGIN_ROOT}/scripts/coverage-diff.mjs" *)
+  - Bash(node "${CLAUDE_PLUGIN_ROOT}/scripts/e2e-rotas.mjs" *)
 ---
 
 # /pudim:cobertura — Pudim
@@ -32,8 +33,8 @@ A saída é um JSON. Guarde `runner`, `packageManager`, `coverageProvider`, `e2e
 - Se o script sair com código 2 (sem `package.json`): diga que o Pudim, por enquanto,
   atende projetos JavaScript/TypeScript, e pare.
 - Se `runner` for `none`: diga, sem jargão, que o projeto ainda não tem uma ferramenta de
-  testes unitários configurada, que por isso não há o que medir, e que `/pudim:criar-unitario` vai
-  oferecer a configuração quando estiver disponível. Pare.
+  testes unitários configurada, que por isso não há o que medir, e que `/pudim:criar-unitario`
+  pode oferecer a configuração mínima (sempre perguntando antes). Pare.
 - Se `workspaces` for `true`: avise que projetos com vários pacotes (monorepo) ainda não são
   suportados por completo e que a medição vale só para a pasta atual. Continue.
 
@@ -132,5 +133,6 @@ no arquivo desde a referência? Para responder, rode `/pudim:investigar src/taxa
 
 ## E2E
 
-Se `e2e` for `playwright`, diga que o projeto tem Playwright e que a medição de fluxos
-cobertos pelo E2E chega com o `/pudim:criar-e2e`. Não rode o Playwright neste comando.
+Se `e2e` for `playwright`, rode `node "${CLAUDE_PLUGIN_ROOT}/scripts/e2e-rotas.mjs" --root=.`
+e acrescente uma linha com o resultado exato ("Rotas com teste E2E: 2 de 7 (28,57%)"). Não rode o
+Playwright neste comando: para rodar, `/pudim:portal`; para criar, `/pudim:criar-e2e`.

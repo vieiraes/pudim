@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pudim — Portal de testes</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍮</text></svg>" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">🍮</span><strong>Pudim</strong><span class="sep">·</span><span>Portal de testes</span></div>
+  <div class="project" id="project"></div>
+  <div class="actions">
+    <label class="toggle" title="Abre o navegador na tela enquanto o teste roda (--headed)">
+      <input type="checkbox" id="headed" /> <span>Ver o navegador</span>
+    </label>
+    <a class="btn ghost" id="btn-report" href="/relatorio?gerar=1" target="_blank" rel="noopener" title="Gera o relatório de qualidade com tudo que está em .qa/">📊 Relatório</a>
+    <button class="btn ghost" id="btn-refresh" title="Lê de novo os testes do projeto">↻ Atualizar lista</button>
+    <button class="btn primary" id="btn-all">▶ Rodar todos</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="side">
+    <input type="search" id="search" placeholder="Buscar teste…" aria-label="Buscar teste" />
+    <div class="side-count" id="side-count"></div>
+    <nav id="tree" aria-label="Testes do projeto"></nav>
+  </aside>
+
+  <main class="main">
+    <section class="panel" id="detail">
+      <div class="crumb" id="crumb">Escolha um teste ou arquivo na lateral.</div>
+      <h1 id="title">Testes E2E do projeto</h1>
+      <div class="cmd"><code id="cmd">npx playwright test</code></div>
+      <div class="row">
+        <button class="btn primary" id="btn-run">▶ Executar</button>
+        <button class="btn danger hidden" id="btn-stop">■ Parar</button>
+        <span class="run-state" id="run-state"></span>
+      </div>
+    </section>
+
+    <section class="panel log-panel">
+      <div class="panel-head">
+        <h2>Log ao vivo</h2>
+        <div class="row">
+          <label class="toggle small"><input type="checkbox" id="autoscroll" checked /> rolar sozinho</label>
+          <button class="btn ghost small" id="btn-copy">Copiar</button>
+          <button class="btn ghost small" id="btn-clear">Limpar</button>
+        </div>
+      </div>
+      <pre class="log" id="log" aria-live="polite"></pre>
+    </section>
+
+    <section class="panel" id="report">
+      <div class="panel-head"><h2>Última execução</h2><span class="muted" id="report-when"></span></div>
+      <div id="report-body" class="muted">Nenhuma execução ainda.</div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Histórico</h2></div>
+      <ol class="history" id="history"></ol>
+    </section>
+  </main>
+</div>
+
+<footer class="foot">Pudim · os números desta tela vêm do relatório JSON do Playwright, não de estimativa. Resultados salvos em <code>.qa/portal/</code>.</footer>
+<script src="app.js"></script>
+</body>
+</html>

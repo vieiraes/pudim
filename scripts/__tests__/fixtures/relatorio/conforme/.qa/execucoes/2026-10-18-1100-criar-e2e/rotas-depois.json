@@ -1,0 +1,1 @@
+{"rotas":[{"rota":"/","coberta":true,"testes":["e2e/home.spec.ts:3"]},{"rota":"/login","coberta":true,"testes":["e2e/login.spec.ts:4"]},{"rota":"/conta","coberta":true,"testes":["e2e/conta.spec.ts:5"]}],"total":3,"cobertas":3,"descobertas":0,"percentual":100}

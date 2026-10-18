@@ -39,6 +39,14 @@ OUT="$(bash "$HERE/qa-detect.sh" "$FX/detect/none")"; RC=$?
 [ "$(json_get "$OUT" 'o.runner')" = "none" ] && ok "none: runner=none" || fail "none runner" "$OUT"
 [ "$(json_get "$OUT" 'o.coverageInclude[0]')" = "**/*.{js,jsx,ts,tsx,mjs,cjs}" ] && ok "none: sem pasta src, mede a raiz" || fail "none include" "$OUT"
 
+OUT="$(bash "$HERE/qa-detect.sh" "$FX/detect/jest-playwright")"
+[ "$(json_get "$OUT" '[o.testFiles,o.testStyle,o.testExt].join("|")')" = "2|__tests__|.test.js" ] && ok "jest+playwright: 2 testes no estilo __tests__ (.test.js)" || fail "testStyle" "$OUT"
+[ "$(json_get "$OUT" 'o.testExample')" = "src/__tests__/index.test.js" ] && ok "jest+playwright: modelo = menor teste existente" || fail "testExample" "$OUT"
+[ "$(json_get "$OUT" '[o.e2eDir,o.e2eFiles,o.e2eExample].join("|")')" = "e2e|1|e2e/home.spec.ts" ] && ok "jest+playwright: e2eDir lido da config, 1 spec de modelo" || fail "e2eDir" "$OUT"
+[ "$(json_get "$OUT" '[o.baseURL,o.webServer,o.moduleType].join("|")')" = "http://localhost:3000|true|cjs" ] && ok "jest+playwright: baseURL, webServer e cjs" || fail "baseURL" "$OUT"
+OUT="$(bash "$HERE/qa-detect.sh" "$FX/detect/vitest")"
+[ "$(json_get "$OUT" '[o.testStyle,o.testExt,o.moduleType,o.vitestGlobals,o.e2eDir].join("|")')" = "ao-lado|.test.ts|esm|true|" ] && ok "vitest: testes ao lado, .test.ts, esm, globals, sem e2e" || fail "vitest estilo" "$OUT"
+
 OUT="$(bash "$HERE/qa-detect.sh" "$FX/detect/nao-existe" 2>/dev/null)"; RC=$?
 [ "$RC" -eq 2 ] && ok "sem package.json: exit 2" || fail "sem package.json: exit $RC"
 
@@ -109,6 +117,84 @@ bash "$RT" 0 -- true >/dev/null 2>&1; RC=$?
 [ "$RC" -eq 3 ] && ok "N=0: uso inválido, exit 3" || fail "N=0: exit $RC"
 bash "$RT" 3 true >/dev/null 2>&1; RC=$?
 [ "$RC" -eq 3 ] && ok "sem '--': uso inválido, exit 3" || fail "sem --: exit $RC"
+
+echo ""
+echo "[test-quality.mjs]"
+TQ="$HERE/test-quality.mjs"; QF="$FX/qualidade"
+OUT="$(node "$TQ" "$QF/bons.test.js" --json)"; RC=$?
+[ "$RC" -eq 0 ] && [ "$(json_get "$OUT" '[o.total,o.aprovados].join("/")')" = "6/6" ] \
+  && ok "bons: 6 de 6 aprovados (each, helper, regex e chaves em string), exit 0" || fail "bons: exit $RC" "$OUT"
+OUT="$(node "$TQ" "$QF/falsos.test.js" --json)"; RC=$?
+[ "$RC" -eq 1 ] && [ "$(json_get "$OUT" 'o.recusados')" = "7" ] && ok "falsos: 7 de 7 recusados, exit 1" || fail "falsos: exit $RC" "$OUT"
+[ "$(json_get "$OUT" 'o.arquivos[0].testes.map(t=>t.motivos.join("+")).join(",")')" = "sem_verificacao,so_existencia,so_snapshot,pulado,foco,pulado,pulado" ] \
+  && ok "falsos: motivo certo para cada teste (sem verificação, existência, snapshot, skip, only, todo, xit)" || fail "motivos" "$OUT"
+OUT="$(node "$TQ" "$QF/alvo/taxa.test.js" --json)"
+[ "$(json_get "$OUT" 'o.arquivos[0].testes[0].motivos.join()')" = "mock_do_alvo" ] && ok "jest.mock do próprio módulo testado: recusado" || fail "mock_do_alvo" "$OUT"
+OUT="$(node "$TQ" "$QF/alvo/frete.test.js" --json)"; RC=$?
+[ "$RC" -eq 0 ] && ok "mock parcial (importActual) e mock de dependência: aceitos" || fail "mock parcial: exit $RC" "$OUT"
+OUT="$(node "$TQ" "$QF/checkout.spec.ts" --json)"
+[ "$(json_get "$OUT" 'o.arquivos[0].testes.map(t=>t.ok?"ok":t.motivos.join()).join(",")')" = "ok,ok,sem_verificacao,pulado" ] \
+  && ok "playwright: expect(page), helper, clique sem expect recusado, fixme recusado; beforeEach ignorado" || fail "playwright" "$OUT"
+node "$TQ" "$QF/nao-existe.test.js" >/dev/null 2>&1; RC=$?
+[ "$RC" -eq 3 ] && ok "arquivo ausente: exit 3" || fail "ausente: exit $RC"
+
+echo ""
+echo "[e2e-rotas.mjs]"
+ER="$HERE/e2e-rotas.mjs"; RF="$FX/rotas"
+OUT="$(node "$ER" --root="$RF/next-app" --json)"; RC=$?
+[ "$RC" -eq 0 ] && [ "$(json_get "$OUT" 'o.rotas.map(r=>r.rota).join(",")')" = "/,/conta,/produtos,/produtos/[id]" ] \
+  && ok "next app router: 4 rotas (grupo (loja) some, _lib e api/route fora)" || fail "next-app rotas" "$OUT"
+[ "$(json_get "$OUT" '[o.cobertas,o.total,o.percentual].join("|")')" = "3|4|75" ] && ok "next app router: 3 de 4 cobertas (75%), \${id} casa com [id], URL absoluta e query ignoradas" || fail "next-app cobertura" "$OUT"
+[ "$(json_get "$OUT" 'o.visitasSemRota.join()')" = "/sobre" ] && ok "next app router: visita a /sobre aparece como sem rota" || fail "visitasSemRota" "$OUT"
+OUT="$(node "$ER" --root="$RF/next-pages" --json)"
+[ "$(json_get "$OUT" 'o.rotas.map(r=>r.rota+(r.coberta?"✔":"")).join(",")')" = "/,/login✔,/pedidos/[id]" ] \
+  && ok "next pages router: _app, 404 e api fora; \${BASE_URL}/login cobre /login" || fail "next-pages" "$OUT"
+OUT="$(node "$ER" --root="$RF/react-router" --json)"
+[ "$(json_get "$OUT" '[o.rotas.map(r=>r.rota).join(","),o.cobertas].join("|")')" = "/,/carrinho,/checkout|0" ] \
+  && ok "react router: <Route path> e createBrowserRouter, '*' ignorado, 0 cobertas" || fail "react-router" "$OUT"
+node "$ER" --root="$RF/nao-existe" >/dev/null 2>&1; RC=$?
+[ "$RC" -eq 3 ] && ok "pasta ausente: exit 3" || fail "rotas ausente: exit $RC"
+
+echo ""
+echo "[relatorio.mjs]"
+RL="$HERE/relatorio.mjs"; RX="$FX/relatorio"; AG="--agora=2026-10-18T15:00:00"
+T="$(mktemp -d)"
+OUT="$(node "$RL" --root="$RX/bloqueado" --saida="$T/b" $AG --json)"; RC=$?
+[ "$RC" -eq 0 ] && [ "$(json_get "$OUT" 'o.status')" = "BLOQUEADO" ] && ok "bloqueado: falha E2E + Bug no produto recente → BLOQUEADO" || fail "bloqueado: exit $RC" "$OUT"
+[ "$(json_get "$OUT" 'o.motivos[0]')" = "E2E: falhou em 1 de 5 na última execução (portal)" ] && ok "bloqueado: motivo com contagem exata (1 de 5)" || fail "motivo" "$OUT"
+[ "$(json_get "$OUT" 'o.numeros[0]')" = "Cobertura (linhas): 35,71% · branches 26,31% · funções 33,33% (referência: 35,71%)" ] \
+  && ok "bloqueado: números copiados da fonte com vírgula, sem arredondar" || fail "numeros" "$OUT"
+[ -f "$T/b/2026-10-18-1500.html" ] && [ -f "$T/b/2026-10-18-1500.md" ] && [ -f "$T/b/2026-10-18-1500-jira.txt" ] && [ -f "$T/b/ultimo.html" ] \
+  && ok "bloqueado: gera HTML, Markdown, Jira e ultimo.html" || fail "arquivos" "$(ls "$T/b")"
+grep -q 'falhou em 5 de 5' "$T/b/2026-10-18-1500.html" && grep -q 'src/pagamentos/estorno.js' "$T/b/2026-10-18-1500.html" \
+  && ok "bloqueado: HTML traz a investigação e o arquivo com 0%" || fail "html conteúdo"
+OUT="$(node "$RL" --root="$RX/atencao" --saida="$T/a" $AG --json)"
+[ "$(json_get "$OUT" '[o.status,o.motivos.length].join("|")')" = "NECESSITA ATENÇÃO|2" ] \
+  && ok "atenção: cobertura caiu + 1 possível bug ao criar testes → NECESSITA ATENÇÃO; Bug no produto de 47 dias atrás não bloqueia" || fail "atencao" "$OUT"
+OUT="$(node "$RL" --root="$RX/conforme" --saida="$T/c" $AG --json)"
+[ "$(json_get "$OUT" 'o.status')" = "CONFORME ESPERADO" ] && ok "conforme: sem bloqueio nem atenção → CONFORME ESPERADO" || fail "conforme" "$OUT"
+[ "$(json_get "$OUT" 'o.numeros.find(n=>n.startsWith("Testes unit"))')" = "Testes unitários criados: cobertura 60,00% → 90,00%; 5 de 5 passaram" ] \
+  && ok "conforme: antes/depois do criar-unitario lido do comparativo e do JSON do Jest" || fail "unitario" "$OUT"
+[ "$(json_get "$OUT" 'o.numeros.find(n=>n.startsWith("Rotas"))')" = "Rotas com teste E2E: 3 de 3 (100,00%)" ] && ok "conforme: rotas cobertas do criar-e2e" || fail "rotas" "$OUT"
+OUT="$(node "$RL" --root="$RX/depois-do-unitario" --saida="$T/d" $AG --json)"
+[ "$(json_get "$OUT" '[o.status,o.numeros[0]].join("|")')" = "CONFORME ESPERADO|Cobertura (linhas): 100,00% · branches 94,73% · funções 100,00% (referência: 35,71%)" ] \
+  && ok "depois do criar-unitario: usa a medição mais nova (100,00%), referência oficial continua 35,71%" || fail "depois-do-unitario" "$OUT"
+OUT="$(node "$RL" --root="$RX/vazio" --saida="$T/v" $AG --json)"
+[ "$(json_get "$OUT" 'o.status')" = "SEM DADOS" ] && ok "vazio: SEM DADOS com orientação" || fail "vazio" "$OUT"
+node "$RL" --root="$RX/nao-existe" >/dev/null 2>&1; RC=$?
+[ "$RC" -eq 3 ] && ok "pasta ausente: exit 3" || fail "relatorio ausente: exit $RC"
+rm -rf "$T"
+
+echo ""
+echo "[portal (server.mjs + playwright-report.mjs)]"
+PT="$(node "$HERE/__tests__/portal-test.mjs" 2>&1)"
+echo "$PT" | grep -v '^RESULTADO '
+LINE="$(echo "$PT" | grep '^RESULTADO ' | tail -1)"
+if [ -n "$LINE" ]; then
+  set -- $LINE; PASS=$((PASS+$2)); FAIL=$((FAIL+$3))
+else
+  fail "portal-test.mjs não terminou" "$(echo "$PT" | tail -5)"
+fi
 
 echo ""
 echo "  Passaram: $PASS   Falharam: $FAIL"

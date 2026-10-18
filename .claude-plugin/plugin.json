@@ -1,7 +1,7 @@
 {
   "name": "pudim",
-  "version": "0.1.0",
-  "description": "O SDET do seu terminal, em português. Entra em um projeto JS/TS que já existe, cria testes unitários e end-to-end quando você pede, mede o que está e o que não está coberto, recusa teste que não testa nada e gera o relatório.",
+  "version": "0.4.0",
+  "description": "Feito por QA, para QA: o primeiro plugin especialista para QA e SDET em português do Brasil. Entra em um projeto JS/TS que já existe, mede a cobertura com números exatos, investiga falhas com análise socrática, cria testes unitários e E2E quando você pede, roda os E2E num portal local, recusa teste que não testa nada e gera o relatório de qualidade.",
   "author": {
     "name": "Bruno Vieira",
     "url": "https://github.com/vieiraes"
@@ -9,6 +9,6 @@
   "homepage": "https://github.com/vieiraes/pudim",
   "repository": "https://github.com/vieiraes/pudim",
   "license": "MIT",
-  "keywords": ["qa", "sdet", "testes", "jest", "vitest", "playwright", "cobertura", "pt-br"],
+  "keywords": ["qa", "sdet", "testes", "jest", "vitest", "playwright", "cobertura", "portal", "pt-br"],
   "skills": "./skills/"
 }
