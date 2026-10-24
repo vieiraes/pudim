@@ -1,1 +1,1 @@
-{"name":"r"}
+{ "name": "r", "dependencies": { "react-router-dom": "^7.0.0" } }

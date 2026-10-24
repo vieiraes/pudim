@@ -1,7 +1,7 @@
 // 🍮 Pudim — Testes do portal (server.mjs + playwright-report.mjs) com Playwright falso.
 // Chamado por scripts/test.sh. Última linha: "RESULTADO <passaram> <falharam>".
 import { spawn, spawnSync } from 'node:child_process';
-import { cpSync, existsSync, mkdtempSync, readdirSync, rmSync } from 'node:fs';
+import { appendFileSync, cpSync, existsSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import http from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -55,13 +55,13 @@ const server = spawn(process.execPath, [join(SCRIPTS, 'portal', 'server.mjs'), `
 let url = null;
 server.stdout.on('data', (b) => { try { url = JSON.parse(b.toString().split('\n')[0]).url; } catch { /* ignora */ } });
 
-function req(method, path, { body, host } = {}) {
+function req(method, path, { body, host, headers = {} } = {}) {
   const u = new URL(url);
   return new Promise((ok) => {
-    const rq = http.request({ host: u.hostname, port: u.port, path, method, headers: { host: host || u.host, 'content-type': 'application/json' } }, (res) => {
+    const rq = http.request({ host: u.hostname, port: u.port, path, method, headers: { host: host || u.host, 'content-type': 'application/json', ...headers } }, (res) => {
       let s = '';
       res.on('data', (c) => { s += c; });
-      res.on('end', () => { let j = null; try { j = JSON.parse(s); } catch { j = s; } ok({ status: res.statusCode, body: j }); });
+      res.on('end', () => { let j = null; try { j = JSON.parse(s); } catch { j = s; } ok({ status: res.statusCode, body: j, headers: res.headers }); });
     });
     rq.on('error', (e) => ok({ status: 0, body: e.message }));
     if (body) rq.write(JSON.stringify(body));
@@ -107,6 +107,12 @@ try {
   check(st['tests/carrinho.spec.ts:7'] === 'falhou' && st['tests/carrinho.spec.ts:3'] === 'passou' && st['tests/lento.spec.ts:2'] === 'nao_rodou',
     'lista: status de cada teste atualizado pela execução', st);
 
+  res = await req('POST', '/api/executar', { body: { falhos: true } });
+  check(res.status === 202 && res.body.comando === 'npx playwright test tests/carrinho.spec.ts:7 --reporter=list,json', 'só os que falharam: roda só o teste que falhou na última execução', res.body);
+  check(await waitIdle(), 'só os que falharam: execução termina');
+  res = await req('GET', '/api/testes');
+  const st2 = Object.fromEntries(res.body.arquivos.flatMap((a) => a.testes.map((t) => [t.alvo, t.status])));
+  check(st2['tests/carrinho.spec.ts:7'] === 'falhou', 'status por teste guarda o projeto do Playwright (chave id|chromium) e segue "falhou"', st2);
   res = await req('POST', '/api/executar', { body: { alvo: 'tests/lento.spec.ts' } });
   check(res.status === 202, 'executar teste lento: 202');
   res = await req('POST', '/api/executar', { body: { alvo: null } });
@@ -119,8 +125,8 @@ try {
   check(res.body.parado === true, 'relatório marca a execução como parada');
 
   res = await req('GET', '/api/historico');
-  check(res.body.execucoes?.length === 2, 'histórico: 2 execuções', res.body.execucoes?.length);
-  check(readdirSync(join(root, '.qa', 'portal', 'execucoes')).length === 2, 'grava em .qa/portal/execucoes/');
+  check(res.body.execucoes?.length === 3, 'histórico: 3 execuções', res.body.execucoes?.length);
+  check(readdirSync(join(root, '.qa', 'portal', 'execucoes')).filter((f) => f.endsWith('.json')).length === 3, 'grava em .qa/portal/execucoes/');
 
   res = await req('GET', '/relatorio');
   check(res.status === 404 && String(res.body).includes('Nenhum relatório'), 'relatório: 404 com orientação antes de gerar', res.status);
@@ -129,13 +135,56 @@ try {
     'relatório: gerar pelo portal mostra BLOQUEADO, "falhou em 1 de 3" (o teste que não rodou fica fora da conta)', res.status);
   check(existsSync(join(root, '.qa', 'relatorios', 'ultimo.html')), 'relatório: grava em .qa/relatorios/');
 
+  // Arquivo corrompido no histórico não derruba o portal.
+  writeFileSync(join(root, '.qa', 'portal', 'execucoes', '0000-00-00-000000.json'), '{"execucao":');
+  res = await req('GET', '/api/historico');
+  check(res.status === 200 && res.body.execucoes?.length === 3, 'JSON corrompido em execucoes/: ignorado, portal segue no ar', res.body);
+  rmSync(join(root, '.qa', 'portal', 'execucoes', '0000-00-00-000000.json'));
+  res = await req('GET', '/api/info', { headers: { 'sec-fetch-site': 'cross-site' } });
+  check(res.status === 403, 'pedido de outro site (Sec-Fetch-Site: cross-site): 403', res.status);
+  res = await req('GET', '/relatorio?gerar=1');
+  check(String(res.headers?.['content-security-policy'] || '').includes("default-src 'none'"), 'relatório servido com Content-Security-Policy', res.headers);
+
   res = await req('GET', '/');
   check(res.status === 200 && String(res.body).includes('Portal de testes'), 'tela: GET / serve o HTML');
   res = await req('GET', '/../server.mjs');
   check(res.status === 404, 'tela: não serve arquivo fora de public/', res.status);
 
+  // ── Vários alvos e afetados pelo git ──────────────────────────────────────
+  res = await req('POST', '/api/executar', { body: { alvos: ['tests/carrinho.spec.ts:3', 'tests/carrinho.spec.ts:7'] } });
+  check(res.status === 202 && res.body.comando === 'npx playwright test tests/carrinho.spec.ts:3 tests/carrinho.spec.ts:7 --reporter=list,json',
+    'alvos[]: roda os dois testes num comando só', res.body);
+  check(await waitIdle(), 'alvos[]: execução termina');
+  res = await req('POST', '/api/executar', { body: { alvos: ['tests/carrinho.spec.ts', '--config=/etc/x'] } });
+  check(res.status === 400, 'alvos[] com um alvo fora da lista: 400', res.status);
+  res = await req('POST', '/api/executar', { body: { alvos: [] } });
+  check(res.status === 400, 'alvos[] vazio não vira "rodar todos": 400', res.status);
+  res = await req('GET', '/api/afetados');
+  check(res.status === 400 && /git/.test(res.body.erro), 'afetados sem git: 400 explicando', res.body);
+  const g = (...a) => spawnSync('git', ['-c', 'user.email=pudim@teste.local', '-c', 'user.name=pudim', ...a], { cwd: root });
+  g('init', '-b', 'main'); g('add', '-A'); g('commit', '-m', 'base');
+  appendFileSync(join(root, 'tests', 'carrinho.spec.ts'), '\n// mudança\n');
+  res = await req('GET', '/api/afetados');
+  check(res.status === 200 && res.body.alvos?.join() === 'tests/carrinho.spec.ts' && res.body.totalSpecs === 2,
+    'afetados: só o spec alterado (1 de 2); .qa/ do portal não conta como mudança', res.body.alvos ?? res.body);
+  res = await req('POST', '/api/executar', { body: { afetados: true } });
+  check(res.status === 202 && res.body.comando === 'npx playwright test tests/carrinho.spec.ts --reporter=list,json', 'executar afetados: 202 e comando com a lista', res.body);
+  check(await waitIdle(), 'afetados: execução termina');
+  res = await req('GET', '/api/relatorio');
+  check(res.body.selecao?.selecionados === 1 && res.body.selecao?.totalSpecs === 2, 'execução guarda a seleção (1 de 2)', res.body.selecao);
+  g('commit', '-am', 'spec');
+  res = await req('POST', '/api/executar', { body: { afetados: true } });
+  check(res.status === 400 && /Nenhum teste/.test(res.body.erro), 'sem mudança: afetados recusa em vez de rodar tudo', res.body);
+
   const status = spawnSync(process.execPath, [join(SCRIPTS, 'portal', 'server.mjs'), `--root=${root}`, '--status'], { encoding: 'utf8' });
   check(JSON.parse(status.stdout).rodando === true, '--status: rodando');
+  const plantado = mkdtempSync(join(tmpdir(), 'pudim-plantado-'));
+  cpSync(join(FX, 'projeto'), plantado, { recursive: true });
+  cpSync(join(root, '.qa'), join(plantado, '.qa'), { recursive: true });
+  writeFileSync(join(plantado, '.qa', 'portal', 'servidor.json'), JSON.stringify({ pid: -1, url: 'http://127.0.0.1:1' }));
+  const parar = spawnSync(process.execPath, [join(SCRIPTS, 'portal', 'server.mjs'), `--root=${plantado}`, '--parar'], { encoding: 'utf8' });
+  check(JSON.parse(parar.stdout).rodando === false && !JSON.parse(parar.stdout).parado, 'servidor.json plantado com pid -1: --parar não mata nada', parar.stdout);
+  rmSync(plantado, { recursive: true, force: true });
   spawnSync(process.execPath, [join(SCRIPTS, 'portal', 'server.mjs'), `--root=${root}`, '--parar'], { encoding: 'utf8' });
   for (let i = 0; i < 30 && existsSync(join(root, '.qa', 'portal', 'servidor.json')); i++) await sleep(100);
   check(!existsSync(join(root, '.qa', 'portal', 'servidor.json')), '--parar: desliga e apaga servidor.json');

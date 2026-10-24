@@ -40,6 +40,7 @@ As etapas 1 a 6 foram entregues juntas na **v0.4.0** (ver [CHANGELOG.md](CHANGEL
 - [x] Leitura do resultado do Playwright (passou, falhou, instável, pulado): feita no `scripts/portal/playwright-report.mjs`
 - [x] `scripts/e2e-rotas.mjs`: rotas do app (Next.js app/pages, SvelteKit, React Router, Vue Router) × rotas que algum teste visita com `page.goto`
 - [x] `/pudim:criar-e2e [fluxo ou URL]`: descobre telas, propõe cenários Dado/Quando/Então, gera com Playwright, roda 3 vezes (`--repeat-each=3`), filtra teste falso, mede rotas antes/depois (rodado via `claude -p` numa loja de exemplo: rotas 1 de 4 → 3 de 4, 12 de 12 execuções)
+- [x] `scripts/e2e-afetados.mjs`: specs afetados pelo git diff (imports, rotas, nome da pasta e mapa de áreas `.qa/areas.json` com vizinhos de negócio), aviso de mudança transversal; o `/pudim:criar-e2e` roda só a área, uma vez (`--repeat-each=3` só sob pedido), e o portal ganhou "Rodar afetados"
 - [ ] Cobertura de código pelo E2E (opcional, Chromium)
 
 ## Etapa 6 — Relatório
@@ -49,11 +50,26 @@ As etapas 1 a 6 foram entregues juntas na **v0.4.0** (ver [CHANGELOG.md](CHANGEL
 - [x] Comentário de evidência para Jira (CONFORME ESPERADO / NECESSITA ATENÇÃO / BLOQUEADO)
 - [ ] Adaptar ao formato de relatório visual que o autor usa no dia a dia (prints anotados por passo)
 
+## Revisão de 23/10/2026 (segurança, desempenho, produto)
+
+- [x] Ver `docs/REVISAO-2026-10-23.md`: 13 achados de segurança, 20 de desempenho/correção e 18 de produto/skills, com o estado de cada um
+- [x] `scripts/nova-execucao.mjs` (pasta da execução com hora real) e `--out` em todos os scripts: a skill não transcreve JSON
+- [x] `scripts/produto-intacto.mjs`: foto dos arquivos de produto antes e depois; o painel mostra "produto intacto"
+- [x] `exemplos/banco-digital/`: projeto fictício para validar o Pudim (nunca em projeto real)
+- [x] Relatório: status parcial (E2E seletiva), testes unitários vermelhos bloqueiam, `.qa/config.json`, `Resolvido: sim`
+- [x] `qa-detect` reconhece Mocha, node:test, Bun, Deno, AVA, Jasmine e Cypress e as skills recusam com elegância em vez de oferecer instalar outra ferramenta
+- [x] `/pudim:risco`, `/pudim:instavel` (pelo histórico) e `/pudim:inicio`; lint + `tsc` nos testes gerados; "só os que falharam" no portal; status por projeto do Playwright; possíveis bugs com `Resolvido: sim`
+- [ ] Pendentes da revisão: token do portal para máquina compartilhada, `playwright --list` assíncrono, índice do histórico, "medido com" no painel de cobertura, release
+
+## Visual
+
+- [x] `scripts/ui.mjs` + `scripts/painel.mjs`: painel com barras, setas, selos e árvore nas cores do pudim, desenhado a partir de `.qa/`; todos os comandos fecham a resposta com ele e os scripts saem no mesmo formato no terminal
+
 ## Ideias para as próximas versões
 
-- [ ] `/pudim:testar-branch`: cria testes só para o que mudou na branch em relação à `main` (o cenário "peguei uma branch, testa o que mudou")
-- [ ] `/pudim:instavel`: roda a suíte várias vezes e aponta testes que às vezes passam e às vezes falham
-- [ ] `/pudim:risco`: cruza arquivos que mais mudam no git com os de menor cobertura para dizer onde testar primeiro
+- [ ] `/pudim:testar-branch`: cria testes só para o que mudou na branch em relação à `main` (o cenário "peguei uma branch, testa o que mudou"). Parte E2E já feita pelo `e2e-afetados.mjs`; falta o lado unitário com *diff coverage*
+- [x] `/pudim:instavel`: pelo histórico do portal e do criar-e2e (repetir a suíte fica sob pedido, via `repetir-teste.sh`)
+- [x] `/pudim:risco`: arquivos que mais mudam no git × menor cobertura
 
 ## Depois
 

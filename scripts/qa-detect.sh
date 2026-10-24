@@ -57,6 +57,22 @@ const hasPlaywright = Boolean(deps['@playwright/test'] || pwConfigs.length);
 const runnersFound = [];
 if (hasJest) runnersFound.push('jest');
 if (hasVitest) runnersFound.push('vitest');
+// Ferramentas que o Pudim reconhece mas ainda não mede: a resposta certa é dizer isso, não
+// oferecer a instalação de Jest/Vitest num projeto que já tem testes.
+const outrosRunners = [];
+if (deps.mocha || /\bmocha\b/.test(testScript)) outrosRunners.push('mocha');
+if (/\bnode\s+(?:--test|.*--test)\b/.test(testScript) || /\bnode:test\b/.test(testScript)) outrosRunners.push('node:test');
+if (/\bbun\s+test\b/.test(testScript)) outrosRunners.push('bun');
+if (exists('deno.json') || exists('deno.jsonc') || /\bdeno\s+test\b/.test(testScript)) outrosRunners.push('deno');
+if (deps.ava) outrosRunners.push('ava');
+if (deps.jasmine || deps['jasmine-core']) outrosRunners.push('jasmine');
+if (deps.tap || deps.tape) outrosRunners.push('tap');
+// Lint e tipos: os comandos de criação conferem os testes novos com as ferramentas do próprio projeto.
+const eslint = Boolean(deps.eslint || fs.readdirSync(dir).some((f) => /^(eslint\.config\.[cm]?[jt]s|\.eslintrc(\..*)?)$/.test(f)) || pkg.eslintConfig);
+const typescript = Boolean(deps.typescript || exists('tsconfig.json'));
+const tsconfigPrincipal = exists('tsconfig.app.json') ? 'tsconfig.app.json' : exists('tsconfig.json') ? 'tsconfig.json' : null;
+const e2eOutro = deps.cypress || exists('cypress.config.ts') || exists('cypress.config.js') || exists('cypress.config.mjs') ? 'cypress'
+  : deps.webdriverio || deps['@wdio/cli'] ? 'webdriverio' : deps.puppeteer ? 'puppeteer' : null;
 
 // Preferência: o runner citado em "npm test"; senão o único encontrado; senão vitest.
 let runner = 'none';
@@ -84,14 +100,16 @@ else if (exists('bun.lockb') || exists('bun.lock')) packageManager = 'bun';
 else if (typeof pkg.packageManager === 'string') packageManager = pkg.packageManager.split('@')[0];
 
 // TypeScript paths (precisam de moduleNameMapper / vite-tsconfig-paths).
+// Aliases podem estar em tsconfig.app.json (Vite, via references) ou jsconfig.json, não só no tsconfig.json.
 let tsPaths = false;
-const tsconfig = read('tsconfig.json');
-if (tsconfig) {
+for (const f of fs.readdirSync(dir).filter((x) => /^(tsconfig[^/]*|jsconfig)\.json$/.test(x))) {
+  const tsconfig = read(f);
+  if (!tsconfig) continue;
   try {
     const stripped = tsconfig.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '').replace(/,\s*([}\]])/g, '$1');
     const ts = JSON.parse(stripped);
-    tsPaths = Boolean(ts.compilerOptions && ts.compilerOptions.paths && Object.keys(ts.compilerOptions.paths).length);
-  } catch { tsPaths = /"paths"\s*:/.test(tsconfig); }
+    if (ts.compilerOptions && ts.compilerOptions.paths && Object.keys(ts.compilerOptions.paths).length) tsPaths = true;
+  } catch { if (/"paths"\s*:/.test(tsconfig)) tsPaths = true; }
 }
 
 // Pastas de código-fonte: sem isso, Jest só mede arquivos importados por algum teste e
@@ -163,7 +181,12 @@ const vitestGlobals = runner === 'vitest' && /globals\s*:\s*true/.test(vitestCon
 console.log(JSON.stringify({
   runner,
   runnersFound,
+  outrosRunners,
+  eslint,
+  typescript,
+  tsconfigPrincipal,
   e2e: hasPlaywright ? 'playwright' : 'none',
+  e2eOutro,
   packageManager,
   coverageProvider,
   tsPaths,

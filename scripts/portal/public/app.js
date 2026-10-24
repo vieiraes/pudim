@@ -4,7 +4,8 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const fmtMs = (ms) => (ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(2).replace('.', ',')} s`);
 const fmtPct =(n, d) => (d ? ((n / d) * 100).toFixed(2).replace('.', ',') : '0,00');
 
-const ui = { list: null, selected: null, running: null, filter: '' };
+const ui = { list: null, selected: null, running: null, filter: '', affected: null };
+const AFETADOS = '@afetados';
 
 // ── ANSI → HTML com estado (cor e negrito continuam entre pedaços do log) ──
 const ansi = { bold: false, dim: false, color: null, pending: '' };
@@ -106,8 +107,36 @@ function findTarget(alvo) {
   return null;
 }
 
+function renderAffected() {
+  const a = ui.affected;
+  const headed = $('headed').checked ? ' --headed' : '';
+  $('crumb').textContent = 'Afetados pelo que mudou';
+  $('affected').classList.remove('hidden');
+  if (!a) { $('title').textContent = 'Calculando o que mudou…'; $('affected').innerHTML = ''; return; }
+  if (a.erro) { $('title').textContent = 'Não deu para saber o que mudou'; $('affected').innerHTML = `<p>${esc(a.erro)}</p>`; $('cmd').textContent = ''; return; }
+  $('title').textContent = `${a.alvos.length} de ${a.totalSpecs} arquivos de teste`;
+  $('cmd').textContent = a.alvos.length ? `npx playwright test ${a.alvos.join(' ')}${headed}` : '';
+  const porSpec = new Map(a.specs.map((s) => [s.arquivo, s.motivos]));
+  $('affected').innerHTML = `
+    <div class="muted">${a.alterados.length} arquivos alterados${a.areas.length ? ` · áreas: ${esc(a.areas.join(', '))}` : ''}${a.mapa ? '' : ' · sem .qa/areas.json (vizinhos de negócio não entram)'}</div>
+    ${a.transversal.sim ? `<div class="warn"><strong>Mudança transversal:</strong> pode valer rodar todos.<ul>${a.transversal.motivos.map((m) => `<li><code>${esc(m.arquivo)}</code>: ${esc(m.motivo)}</li>`).join('')}</ul></div>` : ''}
+    ${a.alvos.length ? `<ul>${a.alvos.map((s) => `<li><code>${esc(s)}</code> · ${esc(porSpec.get(s).map((m) => `${m.tipo}: ${m.detalhe}`).join(' · '))}</li>`).join('')}</ul>` : '<p>Nenhum teste E2E ligado ao que mudou.</p>'}
+    ${a.semEfeito.length ? `<div class="muted">Sem teste ligado: ${esc(a.semEfeito.join(', '))}</div>` : ''}`;
+}
+
+async function selectAffected() {
+  ui.selected = AFETADOS;
+  ui.affected = null;
+  renderAffected();
+  try { ui.affected = await api('/api/afetados'); } catch (e) { ui.affected = { erro: e.message }; }
+  if (ui.selected === AFETADOS) renderAffected();
+  if (ui.list) renderTree();
+}
+
 function select(alvo) {
+  if (alvo === AFETADOS) return selectAffected();
   ui.selected = alvo;
+  $('affected').classList.add('hidden');
   const found = findTarget(alvo);
   const headed = $('headed').checked ? ' --headed' : '';
   if (!found) {
@@ -130,7 +159,8 @@ function select(alvo) {
 // ── Executar e parar ────────────────────────────────────────────────────────
 async function run(alvo) {
   try {
-    await api('/api/executar', { alvo: alvo || null, headed: $('headed').checked });
+    const headed = $('headed').checked;
+    await api('/api/executar', alvo === AFETADOS ? { afetados: true, headed } : { alvo: alvo || null, headed });
   } catch (e) {
     sysLine(`✘ ${e.message}`);
   }
@@ -143,7 +173,9 @@ function setRunning(r) {
   $('btn-run').classList.toggle('hidden', !!r);
   $('btn-stop').classList.toggle('hidden', !r);
   $('btn-all').disabled = !!r;
-  $('run-state').textContent = r ? `Rodando: ${r.alvo || 'todos os testes'}` : '';
+  $('btn-affected').disabled = !!r;
+  if (r) $('btn-failed').disabled = true;
+  $('run-state').textContent = r ? `Rodando: ${r.selecao ? `afetados (${r.selecao.selecionados} de ${r.selecao.totalSpecs})` : r.alvo || 'todos os testes'}` : '';
   if (ui.list) renderTree();
 }
 
@@ -168,8 +200,10 @@ async function loadReport() {
   else if (s.instavel) verdict = `Passou, mas ${s.instavel} de ${rodaram} só passou na repetição: teste instável.`;
   else verdict = `Passou em ${s.passou} de ${rodaram}.`;
   if (r.parado) verdict += ' Execução parada no meio: os números cobrem só o que rodou.';
-  const box = (k, label) => `<div class="total ${k}"><b>${s[k]}</b>${label}</div>`;
+  const box = (k, label) => `<div class="total ${k}"><b>${esc(s[k])}</b>${label}</div>`;
   const problems = r.testes.filter((t) => t.status === 'falhou' || t.status === 'instavel');
+  $('btn-failed').disabled = !!ui.running || !problems.length;
+  $('btn-failed').textContent = problems.length ? `↻ Só os que falharam (${problems.length})` : '↻ Só os que falharam';
   $('report-body').innerHTML = `
     <p class="verdict">${esc(verdict)}</p>
     <div class="totals">${box('passou', 'passaram')}${box('falhou', 'falharam')}${box('instavel', 'instáveis')}${box('pulou', 'pulados')}</div>
@@ -177,7 +211,7 @@ async function loadReport() {
     ${problems.map((t) => `
       <div class="fail-item ${t.status}">
         <h3>${t.status === 'instavel' ? '⚠ Instável' : '✘ Falhou'} · ${esc([...t.describe, t.titulo].join(' › '))}${t.projeto ? ` <span class="muted">[${esc(t.projeto)}]</span>` : ''}</h3>
-        <div class="muted">${esc(t.alvo)} · ${t.tentativas} tentativa(s) · ${fmtMs(t.duracaoMs)}</div>
+        <div class="muted">${esc(t.alvo)} · ${esc(t.tentativas)} tentativa(s) · ${fmtMs(Number(t.duracaoMs) || 0)}</div>
         ${t.erro ? `<pre>${esc(t.erro)}</pre>` : ''}
         ${t.trace ? `<div class="trace">Abrir o trace: <code>npx playwright show-trace ${esc(t.trace)}</code><button class="btn ghost small" data-copy="npx playwright show-trace ${esc(t.trace)}">Copiar</button></div>` : ''}
         ${t.screenshot ? `<div class="trace">Screenshot: <code>${esc(t.screenshot)}</code></div>` : ''}
@@ -191,8 +225,8 @@ async function loadHistory() {
   try { h = await api('/api/historico'); } catch { return; }
   $('history').innerHTML = h.execucoes.map((e) => {
     const s = e.resumo;
-    const nums = s ? `${s.passou} passaram · ${s.falhou} falharam${s.instavel ? ` · ${s.instavel} instáveis` : ''}${s.pulou ? ` · ${s.pulou} pulados` : ''}` : 'sem relatório';
-    return `<li><span class="tag">${esc(new Date(e.inicio).toLocaleString('pt-BR'))}</span> · ${esc(e.alvo || 'todos')} · ${nums}${e.parado ? ' · parada' : ''}</li>`;
+    const nums = s ? esc(`${s.passou} passaram · ${s.falhou} falharam${s.instavel ? ` · ${s.instavel} instáveis` : ''}${s.pulou ? ` · ${s.pulou} pulados` : ''}`) : 'sem relatório';
+    return `<li><span class="tag">${esc(new Date(e.inicio).toLocaleString('pt-BR'))}</span> · ${esc(e.selecao ? `afetados (${e.selecao.selecionados} de ${e.selecao.totalSpecs})` : e.alvo || 'todos')} · ${nums}${e.parado ? ' · parada' : ''}</li>`;
   }).join('') || '<li class="muted">Vazio.</li>';
 }
 
@@ -204,7 +238,7 @@ function connect() {
     $('log').innerHTML = '';
     Object.assign(ansi, { bold: false, dim: false, color: null, pending: '' });
     sysLine(`▶ ${d.comando}`);
-    setRunning({ id: d.execucao, alvo: d.alvo });
+    setRunning({ id: d.execucao, alvo: d.alvo, selecao: d.selecao });
   });
   es.addEventListener('log', (ev) => appendLog(ansiToHtml(JSON.parse(ev.data).texto)));
   es.addEventListener('fim', async (ev) => {
@@ -232,10 +266,14 @@ document.addEventListener('click', (ev) => {
 $('btn-run').onclick = () => run(ui.selected);
 $('btn-stop').onclick = stop;
 $('btn-all').onclick = () => { select(null); run(null); };
+$('btn-failed').onclick = async () => {
+  try { await api('/api/executar', { falhos: true, headed: $('headed').checked }); } catch (e) { sysLine(`✘ ${e.message}`); }
+};
+$('btn-affected').onclick = async () => { await selectAffected(); if (ui.affected?.alvos?.length) run(AFETADOS); else sysLine('✘ Nenhum teste E2E afetado pelo que mudou.'); };
 $('btn-refresh').onclick = () => loadTests(true);
 $('btn-clear').onclick = () => { $('log').innerHTML = ''; };
 $('btn-copy').onclick = () => navigator.clipboard?.writeText($('log').innerText);
-$('headed').onchange = () => select(ui.selected);
+$('headed').onchange = () => (ui.selected === AFETADOS ? renderAffected() : select(ui.selected));
 $('search').oninput = (e) => { ui.filter = e.target.value; if (ui.list) renderTree(); };
 
 (async () => {

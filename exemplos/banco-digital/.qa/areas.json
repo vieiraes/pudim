@@ -1,0 +1,8 @@
+{
+  "areas": {
+    "onboarding": { "arquivos": ["src/paginas/Onboarding.tsx", "src/lib/onboarding/**"], "specs": ["e2e/onboarding.spec.ts"], "vizinhos": [] },
+    "pix-out":    { "arquivos": ["src/paginas/PixOut.tsx", "src/lib/pix/**"],            "specs": ["e2e/pix-out.spec.ts"],    "vizinhos": ["saldo", "extrato"] },
+    "saldo":      { "arquivos": ["src/paginas/Saldo.tsx", "src/lib/saldo/**"],           "specs": ["e2e/saldo.spec.ts"],      "vizinhos": [] },
+    "extrato":    { "arquivos": ["src/paginas/Extrato.tsx"],                             "specs": ["e2e/extrato*.spec.ts"],   "vizinhos": [] }
+  }
+}

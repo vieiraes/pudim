@@ -1,0 +1,14 @@
+{
+  "base": "4f1c2a9d0e7b6c5a4f3e2d1c0b9a8f7e6d5c4b3a",
+  "alterados": ["src/carrinho/cupom.ts"],
+  "specs": [
+    { "arquivo": "e2e/carrinho.spec.ts", "motivos": [{ "tipo": "rota", "origem": "src/carrinho/cupom.ts", "detalhe": "tela /carrinho usa src/carrinho/cupom.ts" }] }
+  ],
+  "semEfeito": [],
+  "transversal": { "sim": false, "motivos": [] },
+  "totalSpecs": 3,
+  "selecionados": 1,
+  "areas": ["carrinho"],
+  "mapa": ".qa/areas.json",
+  "e2eDir": "e2e"
+}

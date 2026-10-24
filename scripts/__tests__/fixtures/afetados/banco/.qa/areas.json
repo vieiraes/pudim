@@ -1,0 +1,7 @@
+{
+  "areas": {
+    "onboarding": { "arquivos": ["app/onboarding/**", "src/onboarding/**"], "specs": ["e2e/onboarding.spec.ts"], "vizinhos": [] },
+    "pix-out": { "arquivos": ["app/pix-out/**", "src/pix-out/**"], "specs": ["e2e/pix-out*.spec.ts"], "vizinhos": ["saldo"] },
+    "saldo": { "arquivos": ["app/saldo/**", "src/saldo/**"], "specs": ["e2e/saldo.spec.ts"], "vizinhos": [] }
+  }
+}

@@ -25,6 +25,8 @@ export const MOTIVOS = {
   pulado: 'pulado (skip/todo/fixme)',
   foco: 'com foco (only), esconde o resto da suíte',
   mock_do_alvo: 'faz mock do próprio módulo que testa',
+  espera_fixa: 'espera por tempo fixo (waitForTimeout/sleep) em vez de esperar pela tela',
+  credencial: 'credencial escrita no código (use process.env)',
 };
 
 // Troca comentários e conteúdo de strings/regex por espaços, mantendo posições e quebras de linha.
@@ -94,7 +96,10 @@ function matchClose(code, open) {
 const lineOf = (src, idx) => src.slice(0, idx).split('\n').length;
 const NOT_A_TEST = new Set(['describe', 'beforeEach', 'afterEach', 'beforeAll', 'afterAll', 'use', 'extend', 'step', 'info',
   'setTimeout', 'slow', 'expect', 'configure', 'parallel', 'serial']);
-const EXISTENCE = new Set(['toBeTruthy', 'toBeDefined', 'toBeFalsy', 'not.toBeNull', 'not.toBeUndefined']);
+const EXISTENCE = new Set(['toBeTruthy', 'toBeDefined', 'toBeFalsy', 'not.toBeNull', 'not.toBeUndefined', 'not.toBeTruthy', 'not.toBeFalsy', 'not.toBeDefined']);
+// Senha/token escrito no teste: `senha: 'abc123'`, `password = "x"`, `.fill('Senh4!')` depois de um campo de senha.
+const CREDENTIAL_RE = /\b(senha|password|passwd|pwd|secret|token|api[_-]?key|apikey|client[_-]?secret|authorization)\b\s*[:=]\s*['"][^'"]{4,}['"]|get(?:ByLabel|ByPlaceholder|ByTestId|ByRole)\([^)]*(?:senha|password)[^)]*\)[^\n]*?\.fill\(\s*['"][^'"]{4,}['"]/i;
+const FIXED_WAIT_RE = /\bwaitForTimeout\s*\(|\bsleep\s*\(\s*\d|setTimeout\s*\(\s*(?:resolve|r)\s*,\s*\d/;
 const SNAPSHOT = new Set(['toMatchSnapshot', 'toMatchInlineSnapshot']);
 
 // Matchers usados em um trecho: ["toBe", "not.toBeNull", ...]
@@ -121,7 +126,8 @@ function verifyingHelpers(code) {
   while ((m = re.exec(code))) {
     const name = m[1] || m[2];
     const brace = code.indexOf('{', m.index + m[0].length - 1);
-    if (brace < 0) continue;
+    // Arrow de corpo-expressão (`(n) => n * 2`): o próximo `{` é de outra função, não deste helper.
+    if (brace < 0 || (m[2] && code.slice(m.index + m[0].length, brace).trim() !== '')) continue;
     const end = matchClose(code, brace);
     if (end > 0 && (matchersIn(code.slice(brace, end)).length || hasAssert(code.slice(brace, end)))) names.add(name);
   }
@@ -161,14 +167,21 @@ export function analyzeSource(src, file = 'teste.test.js') {
   const helpers = verifyingHelpers(code);
   const mockAlvo = targetMocked(src, code, file);
   const testes = [];
-  const re = /\b(it|test|xit|xtest|fit)\b((?:\s*\.\s*\w+)*)\s*\(/g;
+  const re = /\b(it|test|xit|xtest|fit)\b((?:\s*\.\s*\w+)*)\s*(\(|`)/g;
   let m;
   while ((m = re.exec(code))) {
     if (m.index > 0 && /[.\w$]/.test(code[m.index - 1])) continue;
     const chain = m[2].split('.').map((s) => s.trim()).filter(Boolean);
     if (chain.some((c) => NOT_A_TEST.has(c))) continue;
     let open = m.index + m[0].length - 1;
-    if (chain.includes('each')) {
+    if (m[3] === '`') {
+      // test.each`tabela`(titulo, fn): pula o template marcado.
+      if (!chain.includes('each')) continue;
+      const tick = code.indexOf('`', open + 1);
+      const next = tick >= 0 ? code.slice(tick + 1).match(/^\s*\(/) : null;
+      if (!next) continue;
+      open = tick + next[0].length;
+    } else if (chain.includes('each')) {
       // test.each(tabela)(titulo, fn): pula a tabela.
       const tableEnd = matchClose(code, open);
       const next = code.slice(tableEnd + 1).match(/^\s*\(/);
@@ -200,6 +213,8 @@ export function analyzeSource(src, file = 'teste.test.js') {
       }
     }
     if (mockAlvo) motivos.push('mock_do_alvo');
+    if (FIXED_WAIT_RE.test(body)) motivos.push('espera_fixa');
+    if (CREDENTIAL_RE.test(src.slice(open, close + 1))) motivos.push('credencial');
     testes.push({ titulo, linha: lineOf(src, m.index), ok: motivos.length === 0, motivos });
     re.lastIndex = open + 1; // continua dentro do corpo (testes não se aninham, mas describe sim)
   }
@@ -224,15 +239,25 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     process.exit(3);
   }
   const r = analyzeFiles(files);
+  const outArg = args.find((a) => a.startsWith('--out='));
+  if (outArg) {
+    const { mkdirSync, writeFileSync } = await import('node:fs');
+    const { dirname } = await import('node:path');
+    const out = resolve(outArg.slice(6));
+    mkdirSync(dirname(out), { recursive: true });
+    writeFileSync(out, JSON.stringify(r, null, 2));
+  }
   if (args.includes('--json')) {
     console.log(JSON.stringify(r, null, 2));
   } else {
-    console.log(`Qualidade dos testes: ${r.aprovados} de ${r.total} aprovados, ${r.recusados} recusados`);
-    for (const a of r.arquivos) {
-      for (const t of a.testes) {
-        if (!t.ok) console.log(`  ✘ ${a.arquivo}:${t.linha}  "${t.titulo}": ${t.motivos.map((x) => MOTIVOS[x]).join('; ')}`);
-      }
-    }
+    const ui = await import('./ui.mjs');
+    const L = [...ui.cabecalho('filtro de teste falso')];
+    L.push(ui.linhaBarra('Aprovados', r.total ? (r.aprovados / r.total) * 100 : 0, { valor: `${r.aprovados} de ${r.total}`,
+      extra: r.recusados ? ui.c.falha(ui.plural(r.recusados, 'recusado')) : ui.c.bom('nenhum recusado') }));
+    const recusados = r.arquivos.flatMap((a) => a.testes.filter((t) => !t.ok).map((t) =>
+      `${ui.erro()} ${ui.c.ouro(`${a.arquivo}:${t.linha}`)} "${t.titulo}" ${ui.c.suave('·')} ${t.motivos.map((x) => MOTIVOS[x]).join('; ')}`));
+    if (recusados.length) L.push('', ui.titulo('🛡️ ', 'Recusados'), ...ui.arvore(recusados));
+    console.log(L.join('\n'));
   }
   process.exit(r.recusados ? 1 : 0);
 }

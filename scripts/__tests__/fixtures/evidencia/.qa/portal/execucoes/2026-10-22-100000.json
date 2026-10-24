@@ -1,0 +1,6 @@
+{"execucao":"2026-10-22-100000","inicio":"2026-10-22T13:00:00.000Z","fim":"2026-10-22T13:00:40.000Z","alvo":"e2e/boleto.spec.ts","parado":false,
+ "resumo":{"total":2,"passou":1,"falhou":1,"instavel":0,"pulou":0,"naoRodou":0},
+ "testes":[
+  {"id":"b1","arquivo":"e2e/boleto.spec.ts","alvo":"e2e/boleto.spec.ts:5","describe":["Boleto"],"titulo":"taxa do boleto aparece como número","projeto":"chromium","status":"falhou","tentativas":1,"duracaoMs":1200,"erro":"Error: expect(locator).toHaveText(expected)\nExpected string: \"2.5\"\nReceived string: \"2.50\"","trace":"test-results/boleto/trace.zip","screenshot":"test-results/boleto/test-failed-1.png"},
+  {"id":"b2","arquivo":"e2e/boleto.spec.ts","alvo":"e2e/boleto.spec.ts:12","describe":["Boleto"],"titulo":"emite boleto com vencimento","projeto":"chromium","status":"passou","tentativas":1,"duracaoMs":900,"erro":null,"trace":null,"screenshot":null}
+ ]}

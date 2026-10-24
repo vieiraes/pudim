@@ -17,7 +17,9 @@
     </label>
     <a class="btn ghost" id="btn-report" href="/relatorio?gerar=1" target="_blank" rel="noopener" title="Gera o relatório de qualidade com tudo que está em .qa/">📊 Relatório</a>
     <button class="btn ghost" id="btn-refresh" title="Lê de novo os testes do projeto">↻ Atualizar lista</button>
-    <button class="btn primary" id="btn-all">▶ Rodar todos</button>
+    <button class="btn ghost" id="btn-failed" title="Roda de novo só os testes que falharam ou ficaram instáveis na última execução" disabled>↻ Só os que falharam</button>
+    <button class="btn ghost" id="btn-all" title="Roda a suíte E2E inteira">▶ Rodar todos</button>
+    <button class="btn primary" id="btn-affected" title="Só os testes ligados ao que mudou no git (e às áreas vizinhas do .qa/areas.json)">▶ Rodar afetados</button>
   </div>
 </header>
 
@@ -33,6 +35,7 @@
       <div class="crumb" id="crumb">Escolha um teste ou arquivo na lateral.</div>
       <h1 id="title">Testes E2E do projeto</h1>
       <div class="cmd"><code id="cmd">npx playwright test</code></div>
+      <div class="affected hidden" id="affected"></div>
       <div class="row">
         <button class="btn primary" id="btn-run">▶ Executar</button>
         <button class="btn danger hidden" id="btn-stop">■ Parar</button>

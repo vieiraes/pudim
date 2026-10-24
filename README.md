@@ -10,9 +10,11 @@
 </p>
 
 <p align="center">
-  Plugin para Claude Code que testa um projeto que já existe: mede a cobertura com números exatos,
-  cria testes unitários e E2E quando você pede, investiga falhas até a causa raiz, roda os E2E num
-  portal no seu navegador, recusa teste que não testa nada e entrega o relatório de qualidade.
+  Plugin para Claude Code que testa um projeto JavaScript/TypeScript que já existe e usa Jest ou
+  Vitest (e Playwright para E2E): mede a cobertura com números exatos, cria testes unitários e E2E
+  quando você pede, investiga falhas até a causa raiz, roda os E2E num portal no seu navegador,
+  recusa teste que não testa nada, prova que o código do produto não mudou e entrega o relatório
+  de qualidade.
 </p>
 
 <p align="center">
@@ -32,11 +34,15 @@ pede e guarda medições e relatórios na pasta `.qa/` do projeto testado.
 
 | Comando | O que faz | Situação |
 |---|---|---|
+| `/pudim:inicio` | Diagnóstico de entrada: ferramentas, rotas com e sem E2E, o que mais muda sem cobertura, histórico em `.qa/`, e os 3 próximos passos | ✅ pronto |
 | `/pudim:cobertura [pasta]` | Mede a cobertura dos testes unitários e explica o que falta, comparando com a medição anterior | ✅ pronto |
+| `/pudim:risco [dias]` | Cruza o que mais mudou no git com o que tem menos cobertura e lista os arquivos de maior risco: "por onde começo?" | ✅ pronto |
 | `/pudim:investigar <teste ou bug>` | Investiga um teste que falha ou um bug relatado com análise socrática, até a causa raiz, e diz se é bug no produto, no teste, instabilidade, ambiente ou dados | ✅ pronto |
+| `/pudim:evidencia <bug>` | Junta numa pasta só o que entregar ao dev: relato da investigação, teste que reproduz, screenshot e trace, histórico do arquivo no git e um `pacote.md` pronto para o card | ✅ pronto |
+| `/pudim:instavel` | Aponta os testes E2E que ora passam, ora falham (e os que sempre falham) a partir do histórico, sem rodar nada; mostra o tempo da suíte | ✅ pronto |
 | `/pudim:portal [parar]` | Abre no navegador um portal local (localhost) que lista os testes E2E do Playwright, roda cada um com um clique, mostra o log ao vivo e o resultado com números exatos | ✅ pronto |
 | `/pudim:criar-unitario [alvo]` | Cria testes unitários (Jest ou Vitest) para o que está descoberto, recusa teste falso e mostra a cobertura antes e depois | ✅ pronto |
-| `/pudim:criar-e2e [fluxo]` | Cria testes E2E com Playwright, roda cada um 3 vezes e mostra quantas rotas do app têm teste antes e depois | ✅ pronto |
+| `/pudim:criar-e2e [fluxo]` | Cria testes E2E com Playwright só para a área que mudou (e as vizinhas), roda uma vez só essa área e mostra quantas rotas do app têm teste antes e depois | ✅ pronto |
 | `/pudim:relatorio [jira]` | Junta tudo em um relatório visual (HTML), Markdown e comentário para o Jira, com status CONFORME ESPERADO, NECESSITA ATENÇÃO ou BLOQUEADO | ✅ pronto |
 
 Exemplo real de resposta do `/pudim:cobertura`, em um projeto de pagamentos com Jest:
@@ -66,13 +72,96 @@ Testes criados: 10 em 2 arquivos, 10 de 10 passaram
 Filtro de teste falso: 0 recusados de 10
 ```
 
-E do `/pudim:criar-e2e --sim` numa loja de exemplo:
+E do `/pudim:criar-e2e --sim` numa loja de exemplo (v0.4.0, quando cada teste ainda rodava 3 vezes):
 
 ```
 Rotas com teste E2E: 1 de 4 → 3 de 4
 Testes criados: 4 em 2 arquivos, cada um rodado 3 vezes: 12 de 12 execuções passaram
 Filtro de teste falso: 0 recusados de 4
 ```
+
+### Visual no terminal
+
+Todo comando fecha a resposta com um painel do `scripts/painel.mjs`: barras de progresso,
+setas de subida e descida, selo de status e listas em árvore, nas cores do pudim (caramelo,
+âmbar e ouro). O painel é desenhado a partir do que está em `.qa/`, então nenhuma barra ou
+número é digitado à mão. Saída do painel sobre a fixture de testes que reproduz o projeto de
+pagamentos acima:
+
+```text
+🍮 Pudim · cobertura  loja-bloqueada · main
+────────────────────────────────────────────────────────
+ Linhas     ███████░░░░░░░░░░░░░    35,71%
+ Branches   █████░░░░░░░░░░░░░░░    26,31%
+ Funções    ███████░░░░░░░░░░░░░    33,33%
+────────────────────────────────────────────────────────
+ 📊 2 arquivos · 0 com 100% · 1 sem nenhum teste
+ ● Primeira medição: virou a referência
+
+ 📂 O que mais precisa de teste
+ ├─ src/pagamentos/estorno.js  ░░░░░░░░░░  0,00%
+ └─ src/pagamentos/taxa.js     ████████░░  83,33%
+```
+
+Os scripts também saem nesse formato quando rodam direto no terminal, com cor de verdade
+(truecolor ou 256 cores). Fora de terminal a cor some sozinha; `NO_COLOR=1` desliga e
+`FORCE_COLOR=1|2|3` força. O `repetir-teste.sh` mostra uma barra de progresso a cada execução.
+
+### E2E só da área que mudou
+
+O `/pudim:criar-e2e` e o portal não rodam a suíte E2E inteira a cada mudança. O
+`scripts/e2e-afetados.mjs` lê o que mudou no git (desde a `main`, mais o que não foi commitado)
+e escolhe os specs ligados a essas mudanças, cada um com o motivo:
+
+| Motivo | Quando entra |
+|---|---|
+| `spec` | o próprio spec mudou |
+| `helper` | mudou um page object ou fixture que o spec importa |
+| `rota` | o arquivo alterado chega a uma tela pelos imports (inclusive `@/` do `tsconfig`) ou é um layout acima dela, e o spec visita essa tela |
+| `nome` | a pasta alterada tem o mesmo nome do spec (`pix-out`, `pixOut` e `pix_out` são o mesmo nome) |
+| `mapa` | o `.qa/areas.json` liga a área a vizinhas de negócio |
+
+Exemplo num internet banking: mexer num enum do pix-out roda `pix-out.spec.ts` e
+`saldo.spec.ts` (vizinha no mapa); `onboarding.spec.ts` fica de fora.
+
+O mapa é proposto pelo Pudim na primeira vez (`--sugerir-mapa`) e só é gravado com o seu ok:
+
+```json
+{ "areas": {
+    "pix-out": { "arquivos": ["src/**/pix-out/**"], "specs": ["e2e/pix-out*.spec.ts"], "vizinhos": ["saldo", "extrato"] },
+    "saldo":   { "arquivos": ["src/**/saldo/**"],   "specs": ["e2e/saldo.spec.ts"] } } }
+```
+
+Mudança transversal (`package.json`, lockfile, `playwright.config`, `tsconfig`, `.env`,
+middleware, layout raiz, arquivo de rotas, ou arquivo usado por mais da metade das telas): o Pudim
+avisa o motivo e pergunta antes de rodar a suíte completa. A repetição 3 vezes
+(`--repeat-each=3`) fica só para quando você pedir prova de estabilidade.
+
+### O que o relatório considera
+
+- **Parcial**: quando a última execução E2E foi seletiva (só a área que mudou), o status vem
+  marcado como parcial. CONFORME ESPERADO (parcial) não quer dizer "a suíte passou".
+- **Testes unitários vermelhos bloqueiam**: o `/pudim:cobertura` grava o resultado do runner e
+  qualquer falha vira BLOQUEADO.
+- **`.qa/config.json`**: `{ "ignorar": ["**/*.stories.*", "src/types/**"], "bloqueiaDias": 7 }`
+  tira arquivos das contagens e muda por quantos dias uma investigação "Bug no produto" bloqueia.
+- **`Resolvido: sim`** numa investigação em `.qa/investigacoes/` tira o bloqueio dela.
+- **Produto intacto**: os comandos de criação tiram uma foto (hash) dos arquivos de produto antes
+  e comparam depois (`scripts/produto-intacto.mjs`). Produto alterado nunca é entregue.
+
+### O que o QA entrega ao dev
+
+Quando algo quebra, o Pudim não entrega "deu erro": entrega evidência.
+
+- O `/pudim:investigar` só conclui "Bug no produto" com evidência (comando rodado, arquivo e
+  linha, commit) e com a fonte da expectativa. O relato final traz título, onde, passos, esperado
+  × obtido, frequência contada ("falhou em 5 de 5"), **commit suspeito** e o **trecho** do código
+  em volta da causa, vindos de `git blame`.
+- Os comandos de criação não "ajustam" um teste que falha 3 de 3 contra o requisito: guardam o
+  teste como falha esperada em `bugs/` e registram o caso em `possiveis-bugs.md`.
+- O `/pudim:evidencia <bug>` junta tudo isso numa pasta só, `.qa/evidencias/<data>-<bug>/`:
+  relato, teste que reproduz (com o comando para rodar), screenshot e trace do Playwright,
+  histórico do arquivo no git e um `pacote.md` pronto para colar no card.
 
 ### Relatório de qualidade
 
@@ -96,6 +185,8 @@ O `/pudim:portal` sobe um portal self-service em `http://127.0.0.1:4455`. Quem n
 (outro QA, o PO, o suporte) também consegue rodar os testes E2E e ver o resultado:
 
 - todos os testes Playwright do projeto, por arquivo, com o resultado da última vez;
+- **Rodar afetados**: só os testes ligados ao que mudou no git, com o motivo de cada um e aviso quando a mudança é transversal;
+- **Só os que falharam**: roda de novo só os testes que falharam ou ficaram instáveis na última execução;
 - **Executar** um teste, um arquivo ou todos; **Parar** quando quiser; "Ver o navegador" para assistir;
 - log ao vivo com cores e, ao final, "falhou em X de N" com o erro e o comando para abrir o trace;
 - histórico salvo em `.qa/portal/`. O portal só aceita acesso da própria máquina.
@@ -103,6 +194,18 @@ O `/pudim:portal` sobe um portal self-service em `http://127.0.0.1:4455`. Quem n
 <p align="center">
   <img src="assets/portal.png" width="820" alt="Portal de testes do Pudim: lista de testes à esquerda, log ao vivo e resultado 'Falhou em 1 de 5 (20,00%)'" />
 </p>
+
+## Guia dos comandos
+
+[`docs/COMANDOS.md`](docs/COMANDOS.md) descreve cada comando: o que faz, quando usar, o que acontece
+passo a passo, o que esperar na resposta, o que fica gravado em `.qa/` e os limites.
+
+## Projeto de exemplo
+
+[`exemplos/banco-digital/`](exemplos/banco-digital/) é um internet banking fictício (Vite + React
+Router + Vitest + Playwright) feito para validar o Pudim sem encostar em projeto de verdade. Tem
+telas sem teste E2E, arquivos sem teste unitário, `.qa/areas.json` com vizinhos de negócio e um
+bug proposital em `src/lib/pix/limite.ts`. Toda mudança no Pudim é validada ali primeiro.
 
 ## Instalação
 
@@ -136,7 +239,7 @@ Requisitos: projeto JavaScript/TypeScript com Jest ou Vitest (Playwright para E2
 
 ## Versões e roadmap
 
-Versão atual: **0.4.0**. O que mudou em cada versão está no [CHANGELOG.md](CHANGELOG.md); o que vem
+Versão atual: **0.5.0**. O que mudou em cada versão está no [CHANGELOG.md](CHANGELOG.md); o que vem
 a seguir, no [ROADMAP.md](ROADMAP.md).
 
 ## Por que Pudim?

@@ -1,0 +1,7 @@
+{
+  // alias do Next: @/ aponta para src/
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": { "@/*": ["./src/*"] }, /* comentário com @/* dentro */
+  },
+}

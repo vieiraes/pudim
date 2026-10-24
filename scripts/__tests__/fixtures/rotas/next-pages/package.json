@@ -1,1 +1,1 @@
-{"name":"p"}
+{ "name": "p", "dependencies": { "next": "^15.0.0" } }

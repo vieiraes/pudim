@@ -22,6 +22,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, relative, resolve, isAbsolute } from 'node:path';
 import { execSync } from 'node:child_process';
+import { arvore, bar, c, cabecalho, delta, erro, linhaBarra, padEnd, pct, plural, regua, titulo, width } from './ui.mjs';
 
 const args = process.argv.slice(2);
 const opts = {};
@@ -70,8 +71,8 @@ function normalize(summary) {
   return out;
 }
 
-function gitCommit() {
-  try { return execSync('git rev-parse --short HEAD', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { return null; }
+function gitCommit(cwd) {
+  try { return execSync('git rev-parse --short HEAD', { cwd, stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim(); } catch { return null; }
 }
 
 // --- modo: gravar baseline -----------------------------------------------------
@@ -84,7 +85,7 @@ if (opts['save-baseline']) {
     runner: opts.runner || null,
     provider: opts.provider || null,
     command: opts.command || null,
-    commit: gitCommit(),
+    commit: gitCommit(root),
     date: new Date().toISOString(),
     root: root,
     files: Object.keys(summary).length - 1,
@@ -133,43 +134,46 @@ for (const [file, m] of Object.entries(cur)) {
 
 const removed = Object.keys(base).filter((f) => f !== 'total' && !cur[f]);
 
-if (!onlyJson) {
-  console.log(`\n🍮 Pudim — cobertura: ${summaryPath}${hasBaseline ? ` vs ${baselinePath}` : ' (sem baseline)'}`);
-  if (meta) console.log(`   baseline: runner=${meta.runner || '?'} provider=${meta.provider || '?'} commit=${meta.commit || '?'} data=${meta.date || '?'}`);
-  console.log('');
-  for (const r of rows) {
-    const d = r.deltaLines == null ? '(novo)' : `(${fmt(r.deltaLines)} linhas, ${fmt(r.deltaBranches)} branches)`;
-    const mark = r.status === 'regressão' ? '✘' : r.status === 'melhorou' ? '▲' : r.status === 'novo' ? '＋' : '＝';
-    console.log(`  ${mark} ${r.file}\tlinhas ${r.lines}%\tbranches ${r.branches}%\t${d}`);
-  }
-  for (const f of removed) console.log(`  －  ${f}\t(estava na baseline, não está mais no relatório)`);
-  const t = cur.total, bt = base.total;
-  console.log('');
-  console.log(`  TOTAL linhas ${t.lines.pct}%  branches ${t.branches.pct}%  funções ${t.functions.pct}%` +
-    (bt ? `   (baseline: ${bt.lines.pct}% / ${bt.branches.pct}% / ${bt.functions.pct}% → ${fmt(+(t.lines.pct - bt.lines.pct).toFixed(2))} linhas)` : ''));
-  console.log(`  regressões: ${regressions} (tolerância ${tolerance}%)   novos: ${newFiles}   removidos: ${removed.length}`);
-  console.log('');
-}
-
 const worst = rows
   .filter((r) => r.lines < 100)
   .sort((a, b) => a.lines - b.lines || a.branches - b.branches)
   .slice(0, top)
   .map((r) => ({ file: r.file, lines: r.lines, branches: r.branches }));
 
-if (!onlyJson && worst.length) {
-  console.log('  Menos cobertos:');
-  for (const w of worst) console.log(`    ${w.file}\tlinhas ${w.lines}%\tbranches ${w.branches}%`);
-  console.log('');
+if (!onlyJson) {
+  const t = cur.total, bt = base.total;
+  const dl = (k) => (bt ? delta(+(t[k].pct - bt[k].pct).toFixed(2)) : '');
+  const L = ['', ...cabecalho('cobertura', hasBaseline ? 'atual × referência' : 'sem referência')];
+  if (meta) L.push(` ${c.suave(`referência: ${meta.runner || '?'} · ${meta.provider || '?'} · commit ${meta.commit || '?'} · ${meta.date || '?'}`)}`);
+  L.push(linhaBarra('Linhas', t.lines.pct, { extra: dl('lines') }));
+  L.push(linhaBarra('Branches', t.branches.pct, { extra: dl('branches') }));
+  L.push(linhaBarra('Funções', t.functions.pct, { extra: dl('functions') }));
+  L.push(regua());
+  L.push(` 📊 ${plural(rows.length, 'arquivo')} ${c.suave('·')} regressões ${regressions ? c.falha(regressions, { bold: true }) : c.bom(0)} ${c.suave(`(tolerância ${tolerance}%)`)} ${c.suave('·')} novos ${c.ouro(newFiles)} ${c.suave('·')} removidos ${c.ouro(removed.length)}`);
+  const MARK = { 'regressão': erro(), melhorou: c.bom('▲'), novo: c.ambar('✚'), igual: c.suave('━') };
+  const col = Math.min(40, Math.max(10, ...rows.map((r) => width(r.file)), ...removed.map((f) => width(f))));
+  const itens = rows.map((r) => {
+    const d = r.deltaLines == null ? c.ambar('novo') : `${padEnd(delta(r.deltaLines), 9)}${c.suave('linhas')}  ${padEnd(delta(r.deltaBranches), 9)}${c.suave('branches')}`;
+    return `${MARK[r.status]} ${padEnd(r.file, col)}  ${bar(r.lines, { largura: 10 })} ${padEnd(c.ouro(pct(r.lines)), 7)}  ${d}`;
+  });
+  for (const f of removed) itens.push(`${c.suave('－')} ${padEnd(f, col)}  ${c.suave('estava na referência, não está mais no relatório')}`);
+  if (itens.length) L.push('', titulo('📂', 'Por arquivo'), ...arvore(itens));
+  if (worst.length) {
+    L.push('', titulo('📉', 'Menos cobertos'));
+    L.push(...arvore(worst.map((w) => `${padEnd(w.file, col)}  ${bar(w.lines, { largura: 10 })} ${c.ouro(pct(w.lines))}  ${c.suave(`branches ${pct(w.branches)}`)}`)));
+  }
+  console.log(`${L.join('\n')}\n`);
 }
 
-console.log(JSON.stringify({
+const finalJson = {
   total: cur.total,
   baselineTotal: base.total || null,
   deltaLines: base.total ? +(cur.total.lines.pct - base.total.lines.pct).toFixed(2) : null,
   regressions, newFiles, removed: removed.length, tolerance, hasBaseline,
   filesTotal: rows.length, filesFull: rows.filter((r) => r.lines === 100).length, filesZero: rows.filter((r) => r.lines === 0).length,
   worst,
-}));
+};
+if (opts.out) { mkdirSync(dirname(resolve(opts.out)), { recursive: true }); writeFileSync(resolve(opts.out), JSON.stringify(finalJson, null, 2)); }
+console.log(JSON.stringify(finalJson));
 
 process.exit(regressions > 0 ? 1 : 0);

@@ -4,3 +4,6 @@ node_modules/
 .env.*
 # Artefatos gerados ao testar o próprio plugin
 scripts/__tests__/tmp/
+
+# Arquivos de conferência para o Bruno
+tmp/

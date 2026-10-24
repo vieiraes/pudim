@@ -11,7 +11,7 @@ import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // eslint-disable-next-line no-control-regex
-const ANSI = /\x1b\[[0-9;?]*[A-Za-z]/g;
+const ANSI = /\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)|[\x00-\x08\x0b-\x1f\x7f]/g; // CSI, OSC e controle
 export const stripAnsi = (s) => String(s ?? '').replace(ANSI, '');
 
 const toPosix = (p) => p.split(sep).join('/');

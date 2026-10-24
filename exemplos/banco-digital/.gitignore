@@ -1,0 +1,8 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+.qa/*
+!.qa/areas.json
+!.qa/config.json
+*.tsbuildinfo

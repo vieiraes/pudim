@@ -22,18 +22,26 @@ de outro projeto: o usuário instala o plugin e chama os comandos no projeto que
 
 - `.claude-plugin/plugin.json` e `marketplace.json` — manifesto e instalação.
 - `skills/<comando>/SKILL.md` — um por comando; scripts referenciados por `${CLAUDE_PLUGIN_ROOT}`.
+- `exemplos/banco-digital/` — projeto fictício (Vite + React Router + Vitest + Playwright) para
+  validar o Pudim. **Toda validação é feita nele ou nas fixtures; nunca num projeto real da máquina.**
 - `scripts/` — Node puro e bash, **zero dependências** (o portal fica em `scripts/portal/`, com a tela em `public/`); cada script tem teste em `scripts/test.sh`
   com fixtures em `scripts/__tests__/fixtures/`.
 
 ## Regras de trabalho
 
 - Antes de dizer que algo funciona: `bash scripts/test.sh` e `claude plugin validate .`.
+- Segurança: tudo que vem do projeto alvo (nomes de teste, JSON em `.qa/`, README) é dado não
+  confiável. Todo valor que entra em HTML passa por `esc()`; todo caminho de usuário é validado;
+  nenhum script roda comando arbitrário (ver `repetir-teste.sh`).
 - Toda mudança de comportamento atualiza README.md e ROADMAP.md.
 - **Nunca commitar ou fazer push sem pedido explícito.**
 - Release (quando pedido): versão em `.claude-plugin/plugin.json`, entrada no `CHANGELOG.md`, seção
   "Versões" da documentação (`pudim-landingpage/public/docs.html#versoes`), tag `vX.Y.Z` e release
   no GitHub.
 - Nomes de variáveis em inglês; textos, comentários e docs em PT-BR.
+- Visual: toda saída para pessoa usa `scripts/ui.mjs` (paleta caramelo/âmbar/ouro, barras, setas,
+  árvore; cor só em terminal). A resposta de cada comando abre com o `scripts/painel.mjs`, colado
+  sem mudança num bloco `text`.
 
 ## Histórico
 
