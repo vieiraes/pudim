@@ -9,7 +9,7 @@
 //   .qa/execucoes/*-criar-unitario/ comparativo.json, qualidade.json, resultado.json, resumo.md
 //   .qa/execucoes/*-criar-e2e/      rotas-antes.json, rotas-depois.json, resultado.json, qualidade.json
 //   .qa/portal/execucoes/*.json     execuções do portal
-//   .qa/investigacoes/*.md          investigações (/pudim:investigar)
+//   .qa/investigacoes/*.md          investigações (/qa:investigar)
 // Status: BLOQUEADO > NECESSITA ATENÇÃO > CONFORME ESPERADO (SEM DADOS se .qa/ estiver vazia).
 // Exit: 0 ok · 3 pasta do projeto não existe
 // =============================================================================
@@ -81,7 +81,7 @@ export function collect(root, agora = new Date()) {
   const ev = (p) => { if (existsSync(join(root, p))) dados.evidencias.push(p); };
 
   // Cobertura: última medição + tendência
-  // Cobertura atual = a medição mais recente, do /pudim:cobertura ou do "depois" do /pudim:criar-unitario.
+  // Cobertura atual = a medição mais recente, do /qa:cobertura ou do "depois" do /qa:criar-unitario.
   // Medição com foco numa pasta (-cobertura-foco) nunca vale como cobertura do projeto.
   let referenciaOficial = null;
   const cobExecs = [];
@@ -96,7 +96,7 @@ export function collect(root, agora = new Date()) {
     if (!total) continue;
     cobExecs.push({ d, daCriacao, comp, summaryFile, summary, total });
     if (!daCriacao) dados.tendencia.push({ quando: stampDate(d)?.toISOString() || d, linhas: total.lines?.pct, origem: 'cobertura' });
-    // No criar-unitario o comparativo é "depois × antes"; a referência oficial continua a do /pudim:cobertura.
+    // No criar-unitario o comparativo é "depois × antes"; a referência oficial continua a do /qa:cobertura.
     if (!daCriacao && comp?.hasBaseline) referenciaOficial = comp.baselineTotal;
   }
   const ult = cobExecs[cobExecs.length - 1];
@@ -247,14 +247,14 @@ export function status(d) {
   const bugs = d.investigacoes.filter((i) => /bug no produto/i.test(i.classificacao) && i.recente);
   if (bugs.length) bloq.push(`${bugs.length} investigação(ões) com Bug no produto nos últimos ${dias} dias`);
   if (d.e2eCriacao?.ambiente) aten.push('E2E: as specs novas não puderam rodar por problema de ambiente (app fora do ar); rode de novo com o app no ar');
-  if (d.possiveisBugs.length) aten.push(`${d.possiveisBugs.length} possível(is) bug(s) no produto encontrado(s) ao criar testes; confirme com /pudim:investigar`);
+  if (d.possiveisBugs.length) aten.push(`${d.possiveisBugs.length} possível(is) bug(s) no produto encontrado(s) ao criar testes; confirme com /qa:investigar`);
   if (d.cobertura?.regressoes) aten.push(`Cobertura caiu em ${d.cobertura.regressoes} arquivo(s) em relação à referência`);
   if (d.e2e?.resumo?.instavel) aten.push(`E2E: ${d.e2e.resumo.instavel} teste(s) instável(is) na última execução`);
   if (d.cobertura?.arquivosZero) aten.push(`${d.cobertura.arquivosZero} de ${d.cobertura.arquivosTotal} arquivos sem nenhum teste (0% das linhas)`);
   const rec = (d.unitario?.qualidade?.recusados || 0) + (d.e2eCriacao?.qualidade?.recusados || 0);
   if (rec) aten.push(`${rec} teste(s) recusado(s) pelo filtro de teste falso`);
   const temDados = d.possiveisBugs.length || d.cobertura || d.unitario || d.e2eCriacao || d.portal || d.investigacoes.length;
-  if (!temDados) return { status: 'SEM DADOS', motivos: ['Nenhuma medição em .qa/. Rode /pudim:cobertura, /pudim:portal ou /pudim:investigar antes.'] };
+  if (!temDados) return { status: 'SEM DADOS', motivos: ['Nenhuma medição em .qa/. Rode /qa:cobertura, /qa:portal ou /qa:investigar antes.'] };
   // E2E seletiva (só a área que mudou) não é a suíte completa: o status fica marcado como parcial.
   const sel = d.e2e?.selecao;
   const parcial = Boolean(sel && sel.selecionados < sel.totalSpecs);

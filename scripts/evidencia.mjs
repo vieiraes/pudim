@@ -274,7 +274,7 @@ export function pacoteMd({ bug, rel, testes, anexos, hist, citados, faltando, ag
   }
   if (faltando.length) L.push('## O que não foi possível anexar', '', ...faltando.map((f) => `- ${f}`), '');
   L.push('## Fontes', '', ...bug.fontes.map((f) => `- \`${f}\``), '');
-  L.push('---', 'Gerado por `/pudim:evidencia`. O Pudim não altera o código do produto; este pacote só reúne o que já foi medido.');
+  L.push('---', 'Gerado por `/qa:evidencia`. O Pudim não altera o código do produto; este pacote só reúne o que já foi medido.');
   return `${L.join('\n')}\n`;
 }
 

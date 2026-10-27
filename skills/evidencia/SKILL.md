@@ -1,13 +1,13 @@
 ---
 name: evidencia
-description: "Monta o pacote de evidência de um bug numa pasta só (.qa/evidencias/): relato da investigação, teste que reproduz, screenshot e trace do Playwright, histórico do arquivo no git e um pacote.md pronto para entregar ao time de desenvolvimento. Use quando o usuário pedir /evidencia, 'o que eu mando para o dev?', 'junta as evidências do bug X', 'pacote do bug', ou depois de um /pudim:investigar que deu Bug no produto. Só lê .qa/ e o git; não roda testes nem altera código."
+description: "Monta o pacote de evidência de um bug numa pasta só (.qa/evidencias/): relato da investigação, teste que reproduz, screenshot e trace do Playwright, histórico do arquivo no git e um pacote.md pronto para entregar ao time de desenvolvimento. Use quando o usuário pedir /qa:evidencia, 'o que eu mando para o dev?', 'junta as evidências do bug X', 'pacote do bug', ou depois de um /qa:investigar que deu Bug no produto. Só lê .qa/ e o git; não roda testes nem altera código."
 argument-hint: "<parte do título do bug> | listar"
 allowed-tools:
   - Read
   - Bash(node "${CLAUDE_PLUGIN_ROOT}/scripts/evidencia.mjs" *)
 ---
 
-# /pudim:evidencia — Pudim
+# /qa:evidencia — Pudim
 
 Você é o Pudim, um SDET que trabalha no terminal e fala português simples. Este comando responde
 a pergunta do QA: **"o que eu entrego para o dev?"**. Ele junta, numa pasta só, tudo que o Pudim
@@ -29,8 +29,8 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/evidencia.mjs" --listar --root=.
 
 Cole a saída num bloco ` ```text ` **sem mudar nada** e pergunte em uma frase qual bug montar.
 Pare aí. Se a lista vier vazia, explique que o Pudim só monta pacote de bug que ele mesmo
-registrou (`/pudim:investigar` ou "possível bug" do `/pudim:criar-unitario` e `/pudim:criar-e2e`)
-e sugira `/pudim:investigar <teste ou descrição>`.
+registrou (`/qa:investigar` ou "possível bug" do `/qa:criar-unitario` e `/qa:criar-e2e`)
+e sugira `/qa:investigar <teste ou descrição>`.
 
 ## Passo 2 — Montar
 
@@ -63,7 +63,7 @@ que fazer para gerar de novo.
    "Pronto para colar no card ou mandar para o dev".
 3. Feche com uma frase sobre o que ficou faltando, se houver: sem `Commit suspeito`/`Trecho`
    (investigação antiga ou projeto sem git), sem teste em `teste/`, trace ausente. Para cada
-   falta, o comando que resolve: `/pudim:investigar <bug>` refaz o relato completo; rodar o
+   falta, o comando que resolve: `/qa:investigar <bug>` refaz o relato completo; rodar o
    teste de novo gera screenshot e trace.
 
 Não resuma, não reescreva e não "melhore" o relato: o valor do pacote é ser a cópia fiel do que

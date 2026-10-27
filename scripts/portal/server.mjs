@@ -384,7 +384,7 @@ async function handle(req, res) {
     return undefined;
   }
 
-  // Relatório visual (/pudim:relatorio). Com ?gerar=1, gera de novo antes de mostrar.
+  // Relatório visual (/qa:relatorio). Com ?gerar=1, gera de novo antes de mostrar.
   if (path === '/relatorio') {
     const dirRel = join(ROOT, '.qa', 'relatorios');
     if (url.searchParams.get('gerar') === '1') {
@@ -394,7 +394,7 @@ async function handle(req, res) {
     if (!existsSync(file)) {
       res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
       return res.end('<!doctype html><meta charset="utf-8"><title>Sem relatório</title><body style="font-family:system-ui;padding:32px">' +
-        '<h1>🍮 Nenhum relatório ainda</h1><p>Rode <code>/pudim:relatorio</code> no Claude Code ou use o botão "📊 Relatório" do portal.</p></body>');
+        '<h1>🍮 Nenhum relatório ainda</h1><p>Rode <code>/qa:relatorio</code> no Claude Code ou use o botão "📊 Relatório" do portal.</p></body>');
     }
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; img-src data:" });
     return res.end(readFileSync(file));

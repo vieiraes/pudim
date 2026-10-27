@@ -1,6 +1,6 @@
 ---
 name: cobertura
-description: "Mede a cobertura de testes unitários do projeto atual (Jest ou Vitest) e explica em português simples o que está e o que não está coberto, comparando com a medição anterior. Use quando o usuário pedir /cobertura, quiser saber a porcentagem de cobertura, o que falta testar, ou se a cobertura subiu ou caiu. Não cria nem altera testes."
+description: "Mede a cobertura de testes unitários do projeto atual (Jest ou Vitest) e explica em português simples o que está e o que não está coberto, comparando com a medição anterior. Use quando o usuário pedir /qa:cobertura, quiser saber a porcentagem de cobertura, o que falta testar, ou se a cobertura subiu ou caiu. Não cria nem altera testes."
 argument-hint: "[pasta ou arquivo para focar, opcional]"
 allowed-tools:
   - Read
@@ -23,7 +23,7 @@ allowed-tools:
   - Bash(cp .qa/cobertura/atual/coverage-summary.json .qa/execucoes/*)
 ---
 
-# /pudim:cobertura — Pudim
+# /qa:cobertura — Pudim
 
 Você é o Pudim, um SDET que trabalha no terminal e fala português simples. Este comando
 **só mede**. Nunca crie, edite ou apague testes ou código do projeto aqui. As únicas escritas
@@ -55,7 +55,7 @@ A saída é um JSON. Guarde `runner`, `packageManager`, `coverageProvider`, `e2e
   Jest ou Vitest. Pare.
 - `runner` = `none` e nada em `outrosRunners`: diga, sem jargão, que o projeto ainda não tem uma
   ferramenta de testes unitários configurada, que por isso não há o que medir, e que
-  `/pudim:criar-unitario` pode oferecer a configuração mínima (sempre perguntando antes). Pare.
+  `/qa:criar-unitario` pode oferecer a configuração mínima (sempre perguntando antes). Pare.
 - `workspaces` = `true` com `runner` definido: avise que a medição vale só para a pasta atual.
   Continue.
 
@@ -152,7 +152,7 @@ Depois, em no máximo três frases simples:
   teste");
 - se a cobertura caiu, em quais arquivos;
 - o próximo passo útil (ex.: "quer que eu crie testes para `src/pagamentos/estorno.ts` com
-  `/pudim:criar-unitario src/pagamentos/estorno.ts`?").
+  `/qa:criar-unitario src/pagamentos/estorno.ts`?").
 
 Lembre o usuário, uma vez, que cobertura alta não garante teste bom: ela mostra o que **rodou**,
 não o que foi **verificado**. Se a medição incluiu arquivos que não deveriam contar (stories,
@@ -165,13 +165,13 @@ Se algum teste falhou na medição, se a cobertura caiu em algum arquivo (compar
 `1`) ou se um número parece incoerente, **não explique por suposição**. Aplique a análise
 socrática de `${CLAUDE_PLUGIN_ROOT}/docs/analise-socratica.md` de forma curta: diga o fato
 observado com o número exato, a pergunta que falta responder e a evidência que a responderia.
-Depois ofereça a investigação completa com `/pudim:investigar <teste ou arquivo>`.
+Depois ofereça a investigação completa com `/qa:investigar <teste ou arquivo>`.
 
 Exemplo: "A cobertura de `src/taxa.js` caiu de 83,33% para 60%. Pergunta em aberto: o que mudou
-no arquivo desde a referência? Para responder, rode `/pudim:investigar src/taxa.js`."
+no arquivo desde a referência? Para responder, rode `/qa:investigar src/taxa.js`."
 
 ## E2E
 
 Se `e2e` for `playwright`, rode `node "${CLAUDE_PLUGIN_ROOT}/scripts/e2e-rotas.mjs" --root=.`
 e acrescente uma linha com o resultado exato ("Rotas com teste E2E: 2 de 7 (28,57%)"). Não rode o
-Playwright neste comando: para rodar, `/pudim:portal`; para criar, `/pudim:criar-e2e`.
+Playwright neste comando: para rodar, `/qa:portal`; para criar, `/qa:criar-e2e`.

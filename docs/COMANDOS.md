@@ -2,7 +2,11 @@
 
 Este guia descreve cada comando do plugin: o que ele faz, quando usar, o que acontece passo a
 passo, o que esperar na resposta, o que fica gravado em `.qa/` e os limites. Vale para a versão
-em desenvolvimento (depois da revisão de 23/10/2026).
+0.5.1.
+
+Todos os comandos usam o prefixo `/qa:` (por exemplo, `/qa:cobertura`). Pudim é o nome do
+produto; `qa` é o nome do plugin dentro do marketplace `pudim`, instalado com
+`/plugin install qa@pudim`.
 
 ## Regras que valem para todos
 
@@ -21,7 +25,7 @@ Onde o Pudim grava: `.qa/` na raiz do projeto. Estrutura:
 .qa/
   areas.json                 mapa de áreas e vizinhos de negócio (você confirma; o Pudim propõe)
   config.json                opcional: { "ignorar": [...], "bloqueiaDias": 14 }
-  cobertura/baseline.json    referência de cobertura (só o /pudim:cobertura grava)
+  cobertura/baseline.json    referência de cobertura (só o /qa:cobertura grava)
   cobertura/atual/           última medição do runner
   execucoes/<data>-<comando>/ uma pasta por execução: JSONs dos scripts, resumo.md, possiveis-bugs.md
   investigacoes/<data>-<assunto>.md
@@ -36,7 +40,7 @@ outra ferramenta por cima.
 
 ---
 
-## `/pudim:inicio`
+## `/qa:inicio`
 
 **O que faz.** Diagnóstico de entrada: descobre as ferramentas, conta rotas com e sem E2E,
 lista o que mais muda sem cobertura, resume o que já existe em `.qa/` e sugere os três próximos
@@ -49,9 +53,9 @@ Também quando alguém perguntar "o que o Pudim faz aqui?".
 1. `qa-detect.sh`: runner, E2E, gerenciador, TypeScript, ESLint, monorepo, quantidade de testes.
 2. `e2e-rotas.mjs` (se houver Playwright), `risco.mjs` (se houver git), `instavel.mjs` e
    `painel.mjs relatorio` (se houver dados em `.qa/`).
-3. Monta a resposta e escolhe os três passos pela ordem: sem medição → `/pudim:cobertura`;
-   topo do risco → `/pudim:criar-unitario`; rota principal sem E2E → `/pudim:criar-e2e`; teste
-   instável → `/pudim:investigar`; E2E nunca rodado → `/pudim:portal`.
+3. Monta a resposta e escolhe os três passos pela ordem: sem medição → `/qa:cobertura`;
+   topo do risco → `/qa:criar-unitario`; rota principal sem E2E → `/qa:criar-e2e`; teste
+   instável → `/qa:investigar`; E2E nunca rodado → `/qa:portal`.
 
 **O que esperar.** Painel "Ferramentas", os blocos dos scripts e a lista "Próximos passos".
 Nada roda (nem testes, nem cobertura) e nada é gravado.
@@ -61,13 +65,13 @@ pacote.
 
 ---
 
-## `/pudim:cobertura [pasta ou arquivo]`
+## `/qa:cobertura [pasta ou arquivo]`
 
 **O que faz.** Mede a cobertura de testes unitários com o runner do projeto, compara com a
 medição anterior e mostra o que mais precisa de teste.
 
 **Quando usar.** Antes de criar testes (para saber onde), depois de criar (para provar), e ao
-pegar uma branch (para ver se a cobertura caiu). Com foco (`/pudim:cobertura src/pix`), quando
+pegar uma branch (para ver se a cobertura caiu). Com foco (`/qa:cobertura src/pix`), quando
 só uma área interessa.
 
 **O que acontece.**
@@ -109,7 +113,7 @@ pasta atual.
 
 ---
 
-## `/pudim:risco [dias] [--top=N]`
+## `/qa:risco [dias] [--top=N]`
 
 **O que faz.** Lista os arquivos de produto que mais mudaram no git nos últimos N dias (padrão
 90), cruzados com a cobertura da última medição. Risco = mudanças × (100 − cobertura) / 100.
@@ -140,7 +144,7 @@ e `.d.ts` ficam fora.
 
 ---
 
-## `/pudim:investigar <teste, arquivo ou descrição do bug>`
+## `/qa:investigar <teste, arquivo ou descrição do bug>`
 
 **O que faz.** Investiga até a causa raiz com a análise socrática
 (`docs/analise-socratica.md`): fato observado, reprodução contada, perguntas, cinco porquês,
@@ -165,7 +169,7 @@ bug" apontado pelos comandos de criação.
 esperado, obtido, frequência, **commit suspeito** e **trecho** do código em volta da causa,
 vindos de `git blame`, e evidências).
 
-**Depois.** `/pudim:evidencia <título>` junta esse relato com o teste que reproduz, screenshot,
+**Depois.** `/qa:evidencia <título>` junta esse relato com o teste que reproduz, screenshot,
 trace e histórico do arquivo numa pasta só. Quando o bug for corrigido, acrescente
 `Resolvido: sim` ao arquivo da investigação: isso tira o bloqueio do relatório.
 
@@ -173,15 +177,15 @@ trace e histórico do arquivo numa pasta só. Quando o bug for corrigido, acresc
 
 ---
 
-## `/pudim:evidencia <parte do título do bug> | listar`
+## `/qa:evidencia <parte do título do bug> | listar`
 
 **O que faz.** Responde "o que eu entrego para o dev?": junta numa pasta só
 (`.qa/evidencias/<data>-<slug>/`) tudo que o Pudim já guardou sobre um bug e escreve um
 `pacote.md` pronto para colar no card ou mandar no chat. Só lê `.qa/` e o `git`; não roda teste,
 não mede nada e não inventa texto: é a cópia fiel do que foi registrado.
 
-**Quando usar.** Depois de um `/pudim:investigar` que deu "Bug no produto", ou quando um
-`/pudim:criar-unitario` / `/pudim:criar-e2e` apontou "possível bug" e você vai abrir o card.
+**Quando usar.** Depois de um `/qa:investigar` que deu "Bug no produto", ou quando um
+`/qa:criar-unitario` / `/qa:criar-e2e` apontou "possível bug" e você vai abrir o card.
 
 **O que acontece.**
 1. `evidencia.mjs --listar` indexa os bugs conhecidos: investigações em `.qa/investigacoes/` e
@@ -207,7 +211,7 @@ fica em `.qa/` e você decide para onde vai.
 
 ---
 
-## `/pudim:instavel [--ultimas=N]`
+## `/qa:instavel [--ultimas=N]`
 
 **O que faz.** Lê as execuções E2E já gravadas (portal e `criar-e2e`) e, por teste, conta em
 quantas rodadas passou, falhou ou precisou de repetição. Classifica em instável, sempre falha
@@ -238,12 +242,12 @@ test <arquivo>:<linha>` (sobe o app; só com o seu ok).
 
 ---
 
-## `/pudim:criar-unitario [arquivo ou pasta] [--sim]`
+## `/qa:criar-unitario [arquivo ou pasta] [--sim]`
 
 **O que faz.** Cria testes unitários para o que está sem cobertura, roda, filtra teste falso,
 confere lint e tipos, mede antes e depois e prova que o produto está intacto.
 
-**Quando usar.** Depois do `/pudim:cobertura` ou do `/pudim:risco` apontarem um arquivo. Para
+**Quando usar.** Depois do `/qa:cobertura` ou do `/qa:risco` apontarem um arquivo. Para
 um arquivo específico, passe o caminho.
 
 **O que acontece.**
@@ -288,14 +292,14 @@ diferente do que o nome sugere", não "bug".
 
 ---
 
-## `/pudim:criar-e2e [fluxo, rota ou URL] [--sim]`
+## `/qa:criar-e2e [fluxo, rota ou URL] [--sim]`
 
 **O que faz.** Cria specs Playwright para a área que mudou (e as vizinhas), roda **só essa
 área, uma vez**, filtra teste falso, confere lint, mede rotas com E2E antes e depois e prova que
 o produto está intacto.
 
 **Quando usar.** Depois de mexer num fluxo ("mexi no pix-out") ou para cobrir uma tela sem E2E
-apontada pelo `/pudim:inicio`.
+apontada pelo `/qa:inicio`.
 
 **O que acontece.**
 1. `qa-detect.sh`; `nova-execucao.mjs criar-e2e`; `produto-intacto.mjs --foto`.
@@ -334,14 +338,14 @@ pede a lista de arquivos alterados. Repetir 3 vezes todas as specs novas só sob
 
 ---
 
-## `/pudim:portal [parar | status]`
+## `/qa:portal [parar | status]`
 
 **O que faz.** Sobe em `http://127.0.0.1:4455` (ou a próxima porta livre) um portal local que
 lista os testes Playwright do projeto e permite rodar, acompanhar e ver o resultado sem
 terminal.
 
 **Quando usar.** Para rodar E2E com um clique, para quem não usa terminal (PO, suporte, outro
-QA), ou para alimentar o histórico que o `/pudim:instavel` e o relatório usam.
+QA), ou para alimentar o histórico que o `/qa:instavel` e o relatório usam.
 
 **O que acontece.** `portal/server.mjs --root=. --abrir` em segundo plano. O servidor só escuta
 em `127.0.0.1`, confere `Host`, `Origin` e `Sec-Fetch-Site`, só roda alvos que o Playwright
@@ -362,7 +366,7 @@ listou, remove `ANTHROPIC_*`/`CLAUDE_*` do ambiente dos testes e grava tudo em `
 
 ---
 
-## `/pudim:relatorio [jira] [abrir]`
+## `/qa:relatorio [jira] [abrir]`
 
 **O que faz.** Junta tudo que está em `.qa/` num relatório de qualidade em três formatos:
 HTML (tema escuro âmbar, pronto para imprimir), Markdown e texto para o Jira. Status:
@@ -398,24 +402,24 @@ antigas só pelo resumo).
 ## Fluxos de trabalho recomendados
 
 **Primeiro contato com um projeto**
-`/pudim:inicio` → `/pudim:cobertura` → `/pudim:risco` → `/pudim:criar-unitario <topo do risco>`
-→ `/pudim:relatorio`.
+`/qa:inicio` → `/qa:cobertura` → `/qa:risco` → `/qa:criar-unitario <topo do risco>`
+→ `/qa:relatorio`.
 
 **Mexi numa feature (ex.: pix-out)**
-`/pudim:criar-e2e pix-out` (roda só pix-out e vizinhas) → se algo falhou, `/pudim:investigar
-<teste>` → `/pudim:relatorio` (sai como parcial, de propósito).
+`/qa:criar-e2e pix-out` (roda só pix-out e vizinhas) → se algo falhou, `/qa:investigar
+<teste>` → `/qa:relatorio` (sai como parcial, de propósito).
 
 **Achei um bug e vou falar com o dev**
-`/pudim:investigar <teste ou descrição>` (classificação com evidência, commit suspeito e
-trecho) → `/pudim:evidencia <título>` (pasta com relato, teste que reproduz, screenshot, trace e
+`/qa:investigar <teste ou descrição>` (classificação com evidência, commit suspeito e
+trecho) → `/qa:evidencia <título>` (pasta com relato, teste que reproduz, screenshot, trace e
 histórico) → colar o `pacote.md` no card → `Resolvido: sim` quando fechar.
 
 **Teste "quebra sem motivo"**
-`/pudim:instavel` → `/pudim:investigar <teste>` → corrigir o teste (com seu ok) ou abrir o bug
+`/qa:instavel` → `/qa:investigar <teste>` → corrigir o teste (com seu ok) ou abrir o bug
 → marcar `Resolvido: sim` quando fechar.
 
 **Fechamento de release**
-`/pudim:portal` → "Rodar todos" (uma vez, completa) → `/pudim:cobertura` → `/pudim:relatorio
+`/qa:portal` → "Rodar todos" (uma vez, completa) → `/qa:cobertura` → `/qa:relatorio
 jira`.
 
 ## Scripts por trás dos comandos

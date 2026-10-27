@@ -72,7 +72,7 @@ export function risk(root, { dias = 90, top = 10 } = {}) {
   }
   arquivos.sort((a, b) => b.risco - a.risco || b.mudancas - a.mudancas || a.arquivo.localeCompare(b.arquivo));
   const avisos = [];
-  if (!cob) avisos.push('Sem medição de cobertura em .qa/: o ranking é só por quantidade de mudanças. Rode /pudim:cobertura.');
+  if (!cob) avisos.push('Sem medição de cobertura em .qa/: o ranking é só por quantidade de mudanças. Rode /qa:cobertura.');
   if (!commits) avisos.push(`Nenhum commit nos últimos ${dias} dias.`);
   return {
     dias, commits, medicao: cob ? cob.execucao : null,

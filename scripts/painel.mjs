@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // =============================================================================
-// 🍮 Pudim — Painel do comando: o resumo visual que fecha cada /pudim:*, com barras e ícones.
+// 🍮 Pudim — Painel do comando: o resumo visual que fecha cada /qa:*, com barras e ícones.
 //   node painel.mjs <cobertura|criar-unitario|criar-e2e|relatorio|investigar|portal> [--root=.] [--top=5]
 // Lê o que os comandos gravaram em .qa/ (o mesmo coletor do relatorio.mjs): nenhum número
 // é digitado à mão. Cor só em terminal (NO_COLOR desliga, FORCE_COLOR força).
@@ -191,7 +191,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   }
   const linhas = render(comando, root, { top: Number(opt('top')) || 5, agora: opt('agora') ? new Date(opt('agora')) : undefined });
   if (!linhas) {
-    console.error(`Ainda não há dados de /pudim:${comando} em .qa/.`);
+    console.error(`Ainda não há dados de /qa:${comando} em .qa/.`);
     process.exit(4);
   }
   console.log(linhas.join('\n'));

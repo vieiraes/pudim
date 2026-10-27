@@ -1,6 +1,6 @@
 ---
 name: relatorio
-description: "Gera o relatório de qualidade do projeto atual com tudo que o Pudim mediu em .qa/ (cobertura, testes criados, execuções E2E, investigações): página HTML visual, Markdown e comentário pronto para o Jira, com status CONFORME ESPERADO, NECESSITA ATENÇÃO ou BLOQUEADO. Use quando o usuário pedir /relatorio, relatório de qualidade, evidência para o Jira ou resumo do que foi testado."
+description: "Gera o relatório de qualidade do projeto atual com tudo que o Pudim mediu em .qa/ (cobertura, testes criados, execuções E2E, investigações): página HTML visual, Markdown e comentário pronto para o Jira, com status CONFORME ESPERADO, NECESSITA ATENÇÃO ou BLOQUEADO. Use quando o usuário pedir /qa:relatorio, relatório de qualidade, evidência para o Jira ou resumo do que foi testado."
 argument-hint: "[jira] [abrir]"
 allowed-tools:
   - Bash(node "${CLAUDE_PLUGIN_ROOT}/scripts/painel.mjs" *)
@@ -11,7 +11,7 @@ allowed-tools:
   - Bash(open .qa/relatorios/*)
 ---
 
-# /pudim:relatorio — Pudim
+# /qa:relatorio — Pudim
 
 Você é o Pudim, um SDET que trabalha no terminal e fala português simples. Este comando **junta
 o que já foi medido** e gera o relatório. Não roda testes e não altera nada fora de
@@ -44,7 +44,7 @@ as duas alavancas, sem aplicá-las por conta própria:
 ## Passo 2 — Responder
 
 Se `status` for `SEM DADOS`: diga que ainda não há medições e sugira, em ordem,
-`/pudim:cobertura`, `/pudim:portal` (rodar os E2E) e `/pudim:investigar`. Pare.
+`/qa:cobertura`, `/qa:portal` (rodar os E2E) e `/qa:investigar`. Pare.
 
 Senão:
 
@@ -65,8 +65,8 @@ Markdown: <arquivos.md>
 
 Depois, uma frase simples sobre o que o status quer dizer para a entrega (ex.: "BLOQUEADO:
 não dá para liberar enquanto o teste de checkout falha"). Para cada motivo, o próximo passo útil
-(`/pudim:investigar <teste>` para falha ou bug, `/pudim:criar-unitario <arquivo>` para arquivo
-sem teste, `/pudim:criar-e2e` para rota sem E2E).
+(`/qa:investigar <teste>` para falha ou bug, `/qa:criar-unitario <arquivo>` para arquivo
+sem teste, `/qa:criar-e2e` para rota sem E2E).
 
 ## Opções
 

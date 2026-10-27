@@ -15,6 +15,33 @@ em `.claude-plugin/plugin.json` e na [documentação](https://pudim-spec.web.app
 
 Nada ainda.
 
+## [0.5.1] - 2026-10-27
+
+Comandos com prefixo profissional: `/qa:` no lugar de `/pudim:`. Pudim continua sendo o nome do
+produto e do marketplace.
+
+### Alterado
+
+- Os comandos passam do prefixo `/pudim:` para `/qa:`: `/qa:inicio`, `/qa:cobertura`,
+  `/qa:risco`, `/qa:investigar`, `/qa:evidencia`, `/qa:instavel`, `/qa:criar-unitario`,
+  `/qa:criar-e2e`, `/qa:portal` e `/qa:relatorio`. O comportamento de cada um não mudou.
+- O plugin passa a se chamar `qa` dentro do marketplace `pudim`. Instalação nova:
+  `/plugin install qa@pudim`.
+- Mensagens dos scripts (painel, portal, relatório, risco, instável, evidência), skills,
+  README e documentação usam o prefixo novo.
+
+### Como migrar
+
+Quem tem a versão antiga instalada (`pudim@pudim`) remove e instala de novo:
+
+```
+claude plugin uninstall pudim@pudim
+claude plugin marketplace update pudim
+claude plugin install qa@pudim
+```
+
+Os dados em `.qa/` de cada projeto continuam valendo; nada precisa ser medido de novo.
+
 ## [0.5.0] - 2026-10-23
 
 Quatro comandos novos (`/pudim:inicio`, `/pudim:risco`, `/pudim:instavel`, `/pudim:evidencia`),
@@ -160,7 +187,8 @@ Claude Code e Copilot. O código está no branch `legado/framework-dev`.
 - Fluxo de release: a versão nova é declarada no momento da publicação (commit + envio), não a
   cada commit intermediário.
 
-[Não lançado]: https://github.com/vieiraes/pudim/compare/v0.5.0...HEAD
+[Não lançado]: https://github.com/vieiraes/pudim/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/vieiraes/pudim/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/vieiraes/pudim/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/vieiraes/pudim/compare/v0.3.2...v0.4.0
 [0.3.2]: https://github.com/vieiraes/pudim/releases/tag/v0.3.2

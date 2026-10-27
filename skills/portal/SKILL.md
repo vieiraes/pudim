@@ -1,6 +1,6 @@
 ---
 name: portal
-description: "Sobe o portal de testes do Pudim em localhost: uma tela no navegador que lista os testes E2E (Playwright) do projeto, roda cada um com um clique, mostra o log ao vivo e o resultado com números exatos. Use quando o usuário pedir /portal, quiser rodar os testes E2E visualmente, um portal self-service de testes, ou desligar o portal. Não cria nem altera testes."
+description: "Sobe o portal de testes do Pudim em localhost: uma tela no navegador que lista os testes E2E (Playwright) do projeto, roda cada um com um clique, mostra o log ao vivo e o resultado com números exatos. Use quando o usuário pedir /qa:portal, quiser rodar os testes E2E visualmente, um portal self-service de testes, ou desligar o portal. Não cria nem altera testes."
 argument-hint: "[parar | status]"
 allowed-tools:
   - Bash(node "${CLAUDE_PLUGIN_ROOT}/scripts/painel.mjs" *)
@@ -9,7 +9,7 @@ allowed-tools:
   - Bash(node "${CLAUDE_PLUGIN_ROOT}/scripts/portal/server.mjs" *)
 ---
 
-# /pudim:portal — Pudim
+# /qa:portal — Pudim
 
 Você é o Pudim, um SDET que trabalha no terminal e fala português simples. Este comando **liga
 ou desliga o portal de testes**. Nunca crie, edite ou apague testes ou código do projeto aqui.
@@ -39,7 +39,7 @@ Se `e2e` não for `playwright` e `e2eOutro` estiver definido (Cypress, Webdriver
 diga: "O projeto usa <X> para E2E; o portal do Pudim roda testes do Playwright e ainda não
 trabalha com <X>." e pare. Se não houver nada, diga: "Não achei Playwright neste projeto (nem
 `@playwright/test` no package.json, nem `playwright.config`). O portal roda testes E2E do
-Playwright. Quando houver, é só chamar `/pudim:portal` de novo." e pare.
+Playwright. Quando houver, é só chamar `/qa:portal` de novo." e pare.
 
 ## Passo 2 — Já está no ar?
 
@@ -76,7 +76,7 @@ Na tela você:
 - vê o resultado com números exatos ("falhou em X de N") e o comando para abrir o trace.
 
 Os resultados ficam salvos em .qa/portal/execucoes/.
-Para desligar: /pudim:portal parar
+Para desligar: /qa:portal parar
 ```
 
 Se o portal já rodou testes antes, mostre a última execução logo depois da mensagem:
@@ -87,7 +87,7 @@ node "${CLAUDE_PLUGIN_ROOT}/scripts/painel.mjs" portal --root=.
 
 Cole a saída sem mudar nada num bloco ` ```text ` (código 4 = ainda não rodou nada: pule).
 
-Se algum teste falhou e o usuário quiser entender o porquê, sugira `/pudim:investigar <teste>`.
+Se algum teste falhou e o usuário quiser entender o porquê, sugira `/qa:investigar <teste>`.
 
 ## Regras
 

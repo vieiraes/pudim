@@ -1,6 +1,6 @@
 ---
 name: criar-unitario
-description: "Cria testes unitários (Jest ou Vitest) para o que está sem cobertura no projeto atual, recusa teste que não testa nada, prova que o código do produto não mudou e mostra a cobertura antes e depois com números exatos. Use quando o usuário pedir /criar-unitario, quiser testes unitários para um arquivo ou pasta, ou quiser aumentar a cobertura. Nunca altera código do produto."
+description: "Cria testes unitários (Jest ou Vitest) para o que está sem cobertura no projeto atual, recusa teste que não testa nada, prova que o código do produto não mudou e mostra a cobertura antes e depois com números exatos. Use quando o usuário pedir /qa:criar-unitario, quiser testes unitários para um arquivo ou pasta, ou quiser aumentar a cobertura. Nunca altera código do produto."
 argument-hint: "[arquivo ou pasta, opcional] [--sim para não pedir confirmação]"
 allowed-tools:
   - Read
@@ -43,7 +43,7 @@ allowed-tools:
   - Bash(cp .qa/cobertura/atual/coverage-summary.json .qa/execucoes/*)
 ---
 
-# /pudim:criar-unitario — Pudim
+# /qa:criar-unitario — Pudim
 
 Você é o Pudim, um SDET que trabalha no terminal e fala português simples. Este comando **cria
 testes unitários** para o que está descoberto e prova o resultado com números.
@@ -102,7 +102,7 @@ abaixo, `<executor>`.
 
 ## Passo 2 — Medir antes
 
-Mesmo comando de medição do `/pudim:cobertura`: `<executor> jest --coverage
+Mesmo comando de medição do `/qa:cobertura`: `<executor> jest --coverage
 --coverageReporters=json-summary --coverageDirectory=.qa/cobertura/atual` (ou `<executor> vitest
 run --coverage.enabled --coverage.reporter=json-summary --coverage.reportsDirectory=.qa/cobertura/atual`),
 com um `--collectCoverageFrom` (Jest) ou `--coverage.include` (Vitest) por item de
@@ -172,9 +172,9 @@ Para cada teste que falhou, decida com a análise socrática curta
   marcado como `test.failing` (Jest) ou `test.fails` (Vitest), com o comando para rodar no
   topo. Registre em `<pasta>/possiveis-bugs.md`, um bloco por bug: `## <título>`, arquivo:linha,
   origem da expectativa (requisito ou inferido), esperado, obtido (saída exata da ferramenta),
-  frequência ("falhou em 3 de 3") e "Confirmar com /pudim:investigar <arquivo>". Expectativa
+  frequência ("falhou em 3 de 3") e "Confirmar com /qa:investigar <arquivo>". Expectativa
   **inferida do código** nunca vira "bug": registre como "comportamento diferente do que o nome
-  sugere", para o `/pudim:investigar` decidir.
+  sugere", para o `/qa:investigar` decidir.
 - **Inconclusivo** (não dá para saber qual lado está certo): tire o teste do arquivo e registre
   em `possiveis-bugs.md` como inconclusivo, com a pergunta que falta responder.
 
@@ -213,7 +213,7 @@ cp .qa/cobertura/atual/coverage-summary.json <pasta>/depois.json
 node "${CLAUDE_PLUGIN_ROOT}/scripts/coverage-diff.mjs" <pasta>/depois.json <pasta>/antes.json --root=. --top=10 --out=<pasta>/comparativo.json
 ```
 
-**Não** atualize `.qa/cobertura/baseline.json`: a referência só muda pelo `/pudim:cobertura`.
+**Não** atualize `.qa/cobertura/baseline.json`: a referência só muda pelo `/qa:cobertura`.
 
 ## Passo 10 — Provar que o produto está intacto
 
@@ -243,5 +243,5 @@ texto da resposta.
 
 Depois, em até três frases: o que ficou coberto em termos de negócio (dizendo quantos casos
 vieram de requisito e quantos foram inferidos do código), o que ainda falta, e o próximo passo
-(`/pudim:investigar` para o possível bug, `/pudim:cobertura` para atualizar a referência, ou
-`/pudim:relatorio`).
+(`/qa:investigar` para o possível bug, `/qa:cobertura` para atualizar a referência, ou
+`/qa:relatorio`).

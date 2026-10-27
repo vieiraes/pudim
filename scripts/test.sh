@@ -327,7 +327,7 @@ for i in 1 2 3; do echo "// $i" >> "$G/src/pix-out/enums.ts"; gq commit -am "pix
 echo "// x" >> "$G/src/saldo/formatar.ts"; gq commit -am saldo
 OUT="$(node "$RK" --root="$G" --json)"
 [ "$(json_get "$OUT" '[o.commits,o.arquivos[0].arquivo,o.arquivos[0].mudancas,o.arquivos[0].medido,o.aviso!==null].join("|")')" = "5|src/pix-out/enums.ts|4|false|true" ] \
-  && ok "risco sem cobertura: ranking por mudanças (enums.ts 4 commits), aviso para rodar /pudim:cobertura" || fail "risco sem cobertura" "$OUT"
+  && ok "risco sem cobertura: ranking por mudanças (enums.ts 4 commits), aviso para rodar /qa:cobertura" || fail "risco sem cobertura" "$OUT"
 mkdir -p "$G/.qa/execucoes/2026-10-01-1000-cobertura"
 node -e 'const r=process.argv[1];require("fs").writeFileSync(r+"/.qa/execucoes/2026-10-01-1000-cobertura/summary.json",JSON.stringify({total:{lines:{pct:50}},[r+"/src/pix-out/enums.ts"]:{lines:{pct:20}},[r+"/src/saldo/formatar.ts"]:{lines:{pct:100}}}))' "$G"
 OUT="$(node "$RK" --root="$G" --json)"

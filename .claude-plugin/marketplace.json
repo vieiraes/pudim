@@ -8,8 +8,8 @@
   },
   "plugins": [
     {
-      "name": "pudim",
-      "description": "O SDET do seu terminal, em português: /pudim:inicio, /pudim:cobertura, /pudim:risco, /pudim:investigar, /pudim:evidencia, /pudim:instavel, /pudim:criar-unitario, /pudim:criar-e2e, /pudim:portal e /pudim:relatorio.",
+      "name": "qa",
+      "description": "O SDET do seu terminal, em português: /qa:inicio, /qa:cobertura, /qa:risco, /qa:investigar, /qa:evidencia, /qa:instavel, /qa:criar-unitario, /qa:criar-e2e, /qa:portal e /qa:relatorio.",
       "source": "./"
     }
   ]

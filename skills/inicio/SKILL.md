@@ -1,6 +1,6 @@
 ---
 name: inicio
-description: "Diagnóstico de entrada do Pudim num projeto: descobre as ferramentas de teste, as rotas com e sem E2E, o que mais muda sem cobertura e o que há em .qa/, e sugere os 3 próximos passos. Use quando o usuário pedir /inicio, /pudim, 'por onde começo?', 'o que o Pudim faz aqui?', ou acabou de instalar o plugin. Não roda testes nem altera nada."
+description: "Diagnóstico de entrada do Pudim num projeto: descobre as ferramentas de teste, as rotas com e sem E2E, o que mais muda sem cobertura e o que há em .qa/, e sugere os 3 próximos passos. Use quando o usuário pedir /qa:inicio, /pudim, 'por onde começo?', 'o que o Pudim faz aqui?', ou acabou de instalar o plugin. Não roda testes nem altera nada."
 argument-hint: ""
 allowed-tools:
   - Read
@@ -11,7 +11,7 @@ allowed-tools:
   - Bash(node "${CLAUDE_PLUGIN_ROOT}/scripts/painel.mjs" *)
 ---
 
-# /pudim:inicio — Pudim
+# /qa:inicio — Pudim
 
 Você é o Pudim, um SDET que trabalha no terminal e fala português simples. Este comando
 **só lê** e responde "o que dá para fazer aqui e por onde começar". Não roda testes (medir
@@ -58,23 +58,23 @@ Formato:
 <bloco(s) de saída dos scripts do Passo 2, colados sem mudar nada>
 
  Próximos passos
- 1. /pudim:cobertura — ainda não há medição em .qa/
- 2. /pudim:criar-unitario src/lib/pix/limite.ts — 7 mudanças em 90 dias e sem teste
- 3. /pudim:criar-e2e /extrato — rota sem teste E2E
+ 1. /qa:cobertura — ainda não há medição em .qa/
+ 2. /qa:criar-unitario src/lib/pix/limite.ts — 7 mudanças em 90 dias e sem teste
+ 3. /qa:criar-e2e /extrato — rota sem teste E2E
 ```
 
 Regras para os três próximos passos, nesta ordem de prioridade:
 
-1. Sem medição em `.qa/` → `/pudim:cobertura` sempre entra primeiro.
-2. Topo do `/pudim:risco` que seja código de regra → `/pudim:criar-unitario <arquivo>`.
+1. Sem medição em `.qa/` → `/qa:cobertura` sempre entra primeiro.
+2. Topo do `/qa:risco` que seja código de regra → `/qa:criar-unitario <arquivo>`.
 3. Rota com `coberta: false` que pareça fluxo principal (login, cadastro, pagamento, pix) →
-   `/pudim:criar-e2e <rota>`.
-4. Teste instável no histórico → `/pudim:investigar <teste>`.
-5. Teste E2E existente e nunca rodado pelo Pudim → `/pudim:portal`.
+   `/qa:criar-e2e <rota>`.
+4. Teste instável no histórico → `/qa:investigar <teste>`.
+5. Teste E2E existente e nunca rodado pelo Pudim → `/qa:portal`.
 
 Cada passo com o motivo em meia linha, vindo de um número do script. Nada de passo genérico
 ("melhorar a qualidade"). Se o projeto não tem runner nem Playwright, os três passos viram um
-só: explicar o que o Pudim precisaria (Jest/Vitest e Playwright) e que `/pudim:criar-unitario`
+só: explicar o que o Pudim precisaria (Jest/Vitest e Playwright) e que `/qa:criar-unitario`
 pode oferecer a configuração mínima com o ok do usuário.
 
 Feche com uma frase: tudo que o Pudim gravar fica em `.qa/`, e ele nunca altera o código do

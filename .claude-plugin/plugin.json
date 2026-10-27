@@ -1,6 +1,6 @@
 {
-  "name": "pudim",
-  "version": "0.5.0",
+  "name": "qa",
+  "version": "0.5.1",
   "description": "Feito por QA, para QA: o primeiro plugin especialista para QA e SDET em português do Brasil. Entra em um projeto JavaScript/TypeScript que já existe e usa Jest ou Vitest (e Playwright para E2E), mede a cobertura com números exatos, investiga falhas com análise socrática, monta o pacote de evidência de um bug para entregar ao dev, cria testes unitários e E2E quando você pede, roda os E2E num portal local, recusa teste que não testa nada e gera o relatório de qualidade.",
   "author": {
     "name": "Bruno Vieira",

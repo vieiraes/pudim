@@ -89,7 +89,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const { c } = ui;
   const fmtMs = (ms) => (ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(1).replace('.', ',')} s`);
   const L = [...ui.cabecalho('testes instáveis', `${ui.plural(r.execucoes, 'execução E2E gravada', 'execuções E2E gravadas')}`)];
-  if (!r.testes.length) L.push(` ${c.suave('Nenhuma execução E2E em .qa/ ainda. Rode pelo /pudim:portal ou /pudim:criar-e2e.')}`);
+  if (!r.testes.length) L.push(` ${c.suave('Nenhuma execução E2E em .qa/ ainda. Rode pelo /qa:portal ou /qa:criar-e2e.')}`);
   else {
     L.push(` ${r.instaveis ? c.aviso(`⚠️  ${ui.plural(r.instaveis, 'teste instável', 'testes instáveis')}`) : ui.ok('nenhum teste instável')} ${c.suave('·')} ${r.sempreFalham ? c.falha(`${r.sempreFalham} sempre falham`) : c.bom('0 sempre falham')} ${c.suave('·')} ${c.ouro(r.testes.length)} testes no histórico`);
     const mostrar = r.testes.filter((t) => t.classe !== 'sempre_passa').slice(0, 15);

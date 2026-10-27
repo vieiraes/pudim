@@ -8,8 +8,11 @@ de outro projeto: o usuário instala o plugin e chama os comandos no projeto que
 - Público: QA e SDET. Linguagem dos comandos e das respostas: português simples, sem jargão.
 - Entra em projeto JS/TS **que já existe** e nunca altera código de produto. Só cria testes
   (quando pedido) e escreve na pasta `.qa/` do projeto.
-- Comandos sob demanda, sem ordem obrigatória: `/pudim:cobertura`, `/pudim:investigar`,
-  `/pudim:portal`, `/pudim:criar-unitario`, `/pudim:criar-e2e` e `/pudim:relatorio` (ver ROADMAP.md).
+- Comandos sob demanda, sem ordem obrigatória: `/qa:inicio`, `/qa:cobertura`, `/qa:risco`,
+  `/qa:investigar`, `/qa:evidencia`, `/qa:instavel`, `/qa:criar-unitario`, `/qa:criar-e2e`,
+  `/qa:portal` e `/qa:relatorio` (ver ROADMAP.md).
+- Prefixo dos comandos é `/qa:` (o plugin se chama `qa` no marketplace `pudim`). "Pudim" é só o
+  nome do produto: nunca usar `/pudim:` em comando, skill, script ou documentação.
 - Os comandos de criação guardam a saída bruta das ferramentas em `.qa/execucoes/`; o
   `scripts/relatorio.mjs` calcula tudo a partir dela.
 - Toda investigação (bug, teste falhando, número que não bate) segue `docs/analise-socratica.md`:

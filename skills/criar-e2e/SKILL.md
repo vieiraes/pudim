@@ -1,6 +1,6 @@
 ---
 name: criar-e2e
-description: "Cria testes de ponta a ponta (E2E) com Playwright para telas e fluxos do projeto atual, roda só os testes da área que mudou (e das áreas vizinhas), uma vez, prova que o código do produto não mudou e mostra quantas rotas do app têm teste E2E antes e depois. Use quando o usuário pedir /criar-e2e, quiser teste E2E ou Playwright para um fluxo, tela ou URL. Nunca altera código do produto."
+description: "Cria testes de ponta a ponta (E2E) com Playwright para telas e fluxos do projeto atual, roda só os testes da área que mudou (e das áreas vizinhas), uma vez, prova que o código do produto não mudou e mostra quantas rotas do app têm teste E2E antes e depois. Use quando o usuário pedir /qa:criar-e2e, quiser teste E2E ou Playwright para um fluxo, tela ou URL. Nunca altera código do produto."
 argument-hint: "[fluxo, rota ou URL, opcional] [--sim para não pedir confirmação]"
 allowed-tools:
   - Read
@@ -40,7 +40,7 @@ allowed-tools:
   - Bash(mv .qa/execucoes/*)
 ---
 
-# /pudim:criar-e2e — Pudim
+# /qa:criar-e2e — Pudim
 
 Você é o Pudim, um SDET que trabalha no terminal e fala português simples. Este comando **cria
 testes E2E com Playwright** e prova o resultado com números.
@@ -190,7 +190,7 @@ O resumo do segundo comando é a fonte dos números (`passou`, `falhou`, `instav
     no topo, e registre em `<pasta>/possiveis-bugs.md` (título, rota, passos, esperado com a
     fonte, obtido exato, "falhou em 3 de 3", screenshot/trace do `resultado.json`). Expectativa
     sem fonte não vira "bug": registre como "comportamento diferente do esperado, sem requisito".
-- Falha numa spec que já existia: não mexa nela. Registre no resumo e sugira `/pudim:investigar`.
+- Falha numa spec que já existia: não mexa nela. Registre no resumo e sugira `/qa:investigar`.
 - `--repeat-each=3` para **todas** as specs novas só se o usuário pedir prova de estabilidade
   (ex.: antes de um deploy grande).
 
@@ -256,5 +256,5 @@ Sugestões de data-testid: <se houver>
 
 Escreva `<pasta>/resumo.md` com o mesmo texto da resposta.
 
-Feche com uma frase sobre o que ficou coberto e sugira `/pudim:portal` para rodar os testes
-visualmente e `/pudim:relatorio` para o relatório.
+Feche com uma frase sobre o que ficou coberto e sugira `/qa:portal` para rodar os testes
+visualmente e `/qa:relatorio` para o relatório.
